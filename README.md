@@ -3,10 +3,11 @@
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/Version-v1.00-orange.svg)
+![Version](https://img.shields.io/badge/Version-v1.01-orange.svg)
 
 Mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games):
-**HiddenTanks** (reveals hidden tanks) and **AutoRanksOFF** (removes rank gating).
+**HiddenTanks** (shows hidden tanks), **AutoRanksOFF** (disables rank gating) and
+**RandomTankSelector** (random-tank dice button).
 
 ## Documentation
 

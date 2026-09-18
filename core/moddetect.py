@@ -1,16 +1,15 @@
 """Content-based MODIFIED detection (no registry file).
 
 A file counts as MODIFIED when it carries one of our generator signatures.
-Both mods always stamp their output, so no sidecar state is needed:
-  - AutoRanksOFF: "# AutoRankOFF" header.
-  - HiddenTanks:  "# HiddenTanks-Generator" header.
+Every mod stamps its output with the unified "#HuntezPatch - Generated: ..."
+line (plus a per-mod identity line), so no sidecar state is needed.
 Restore puts originals (without signatures) back, so marks clear by itself.
 """
 import os
 
 from core.file_ops import read_physical
 
-MOD_SIGNATURES = ("# AutoRankOFF", "# HiddenTanks-Generator")
+MOD_SIGNATURES = ("HuntezPatch - Generated",)
 _HEAD_CHARS = 1000
 
 

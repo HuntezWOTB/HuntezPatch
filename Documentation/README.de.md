@@ -4,9 +4,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.00** ist ein Mod-Generator für **World of Tanks Blitz** (Wargaming) und **Tanks Blitz** (Lesta Games).
-Er erstellt zwei Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsbaum) und **AutoRanksOFF**
-(entfernt die Rang-Sperren der Hangar-Oberfläche).
+**HuntezPatch v1.01** ist ein Mod-Generator für **World of Tanks Blitz** (Wargaming) und **Tanks Blitz** (Lesta Games).
+Er erstellt drei Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsbaum), **AutoRanksOFF**
+(entfernt die Rang-Sperren der Hangar-Oberfläche) und **RandomTankSelector** (Würfel-Button für Zufallspanzer im Hangar).
 
 > **Dokumentation in anderen Sprachen:**
 > [🇬🇧 English](README.en.md) · [🇷🇺 Русский](README.ru.md) · [🇺🇦 Українська](README.uk.md) ·
@@ -40,12 +40,13 @@ Er erstellt zwei Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsbau
 |-----|----------|------------------------------|
 | **HiddenTanks** | Zeigt ALLE versteckten Panzer im Forschungsbaum (Premium, Sammler, Test, entfernte). Der Kauf hängt weiterhin von den Angeboten ab — der Mod zeigt die Fahrzeuge nur an. Sortierung pro Stufe: **normal → Sammler → Premium**, innerhalb der Gruppe nach Klasse (**LT → MT → HT → TD**). | `Configs/TechTree/*_tree.yaml` (9 Nationen), `XML/item_defs/vehicles/*/list.xml` (9 Nationen) |
 | **AutoRanksOFF** | Entfernt die Rang-Sperren: Kampf-Button immer sichtbar, Rang-Hinweise versteckt, Aufstiegs-Events entfernt, die Feier „Dein Panzer hat einen Rang“ erscheint nie. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
+| **RandomTankSelector** | Fügt der Panzerleiste einen Button mit zwei Würfeln hinzu — per Klick wird ein zufälliger Panzer gewählt. Das Würfelsymbol wird bei jeder Generierung erzeugt. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, neue Dateien) |
 
 Dieselben Infos stehen in der App hinter dem **?**-Button der Mod-Karte.
 
 ## Funktionen
 
-- Zwei Mods in einem Tool, unabhängig wählbar (Karten mit Checkbox).
+- Drei Mods in einem Tool, unabhängig wählbar (Karten mit Checkbox).
 - Vorgänge **Generieren** (Staging: temp → Backup → Ersetzen) und **Exportieren** (`Mod`- + `Backup`-Paket zum Teilen).
 - Dateimodi **DVPL / NON-DVPL**; DLC-Dateien immer DVPL.
 - **DLC-Unterstützung (Mikro-Updates)** mit Auto-Hinweis und Ein-Klick-Öffnen des `packs`-Ordners.
@@ -57,7 +58,7 @@ Dieselben Infos stehen in der App hinter dem **?**-Button der Mod-Karte.
 ## Voraussetzungen
 
 - **Windows** mit **Python 3.8+** (`python --version`).
-- Abhängigkeiten aus `requirements.txt`: `lz4`, `PyYAML` (`tkinter` ist eingebaut).
+- Abhängigkeiten aus `requirements.txt`: `lz4`, `PyYAML`, `Pillow` (`tkinter` ist eingebaut).
 
 ## Installation
 
@@ -128,7 +129,7 @@ result/BlitzMods_<Mods>_<Version>/
 
 - Generieren sichert pro Mod unter `<Spiel>/BlitzMods_Backup/<Mod>/{Game,DLC}/...`.
 - **↩ Original wiederherstellen** kopiert sie zurück (DLC wieder read-only).
-- Der Browser markiert jede Datei mit Generatorsignatur (`# AutoRankOFF`, `# HiddenTanks-Generator`) als **MODIFIZIERT** — inklusive aller Ordner darüber. Nach Wiederherstellung erlöschen die Markierungen von selbst.
+- Der Browser markiert jede Datei mit Generatorsignatur (`HuntezPatch - Generated`) als **MODIFIZIERT** — inklusive aller Ordner darüber. Nach Wiederherstellung erlöschen die Markierungen von selbst.
 
 ## Oberfläche
 
@@ -149,6 +150,7 @@ Alle Einstellungen werden automatisch gespeichert und beim Start wiederhergestel
 | `! NON-DVPL überspringt DVPL-Datei` | Nur ein Hinweis, kein Fehler — siehe oben. |
 | `Kein Backup für <Mod>` | Mod mindestens einmal generieren. |
 | Rang-Feier erscheint trotzdem | AutoRanksOFF neu generieren (Hauptschalter `ranksAvailable` nötig), vorher Original zurückholen. |
+| Lila Schachbrett statt Würfel | RandomTankSelector neu generieren, vorher Original zurückholen (Symboldatei fehlt). |
 | Spiel aktualisiert | Generieren erneut laufen lassen, `MODIFIZIERT`-Markierungen prüfen. |
 
 ## Projektstruktur
@@ -159,7 +161,7 @@ HuntezPatch/
 ├── requirements.txt
 ├── start_program.bat / autoinstall_modules.bat
 ├── config.json              # generiert: deine Einstellungen (nicht in git)
-├── core/                    # DVPL-Codec, Datei-Ops, Mod-Engines
+├── core/                    # DVPL-Codec, Datei-Ops, Mod-Engines (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank)
 ├── gui/                     # Oberfläche (Karten, Browser, Popups, Protokoll)
 ├── locales/                 # UI-Strings ru/en/uk/de/tr/pl
 ├── Documentation/           # dieses Handbuch in 6 Sprachen

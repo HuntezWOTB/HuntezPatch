@@ -4,9 +4,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.00** is a mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games).
-It builds two mods: **HiddenTanks** (reveals hidden tanks in the research tree) and **AutoRanksOFF**
-(removes rank gating from the hangar UI).
+**HuntezPatch v1.01** is a mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games).
+It builds three mods: **HiddenTanks** (reveals hidden tanks in the research tree), **AutoRanksOFF**
+(removes rank gating from the hangar UI) and **RandomTankSelector** (adds a random-tank dice button to the hangar).
 
 > **Documentation in other languages:**
 > [🇷🇺 Русский](README.ru.md) · [🇺🇦 Українська](README.uk.md) · [🇩🇪 Deutsch](README.de.md) ·
@@ -40,12 +40,13 @@ It builds two mods: **HiddenTanks** (reveals hidden tanks in the research tree) 
 |-----|--------------|------------------------------|
 | **HiddenTanks** | Shows ALL hidden tanks in the research tree (premium, collectible, test, deprecated). Purchase still depends on the developers' offers — the mod only reveals the vehicles. Hidden tanks are sorted per level as **ordinary → collectible → premium**, and by class inside each group (**LT → MT → HT → TD**). | `Configs/TechTree/*_tree.yaml` (9 nations), `XML/item_defs/vehicles/*/list.xml` (9 nations) |
 | **AutoRanksOFF** | Removes rank gating from the UI: the Battle button is always visible, rank-unlock hints are hidden, rank-up events are removed, and the “your tank has a rank” celebration never triggers. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
+| **RandomTankSelector** | Adds a two-dice button to the hangar tanks panel — pressing it selects a random owned tank. The dice icon is generated on every run. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, new files) |
 
 Click the **?** button on a mod card in the app for the same info in your language.
 
 ## Features
 
-- Two mods in one utility, selectable independently (checkbox cards).
+- Three mods in one utility, selectable independently (checkbox cards).
 - **Generate** (staged: temp dir → backup → replace) and **Export** (ready-to-share `Mod` + `Backup` bundle) operations.
 - **DVPL / NON-DVPL** file modes; DLC files are always DVPL.
 - **DLC (micro-update) support** with auto-detection hint and one-click `packs` folder opening.
@@ -57,7 +58,7 @@ Click the **?** button on a mod card in the app for the same info in your langua
 ## Requirements
 
 - **Windows** with **Python 3.8+** (`python --version`).
-- Dependencies from `requirements.txt`: `lz4`, `PyYAML` (`tkinter` is built in).
+- Dependencies from `requirements.txt`: `lz4`, `PyYAML`, `Pillow` (`tkinter` is built in).
 
 ## Installation
 
@@ -128,7 +129,7 @@ result/BlitzMods_<mods>_<version>/
 
 - Generate keeps per-mod backups in `<game>/BlitzMods_Backup/<mod>/{Game,DLC}/...`.
 - **↩ Restore original** copies them back (DLC files back to read-only).
-- The explorer marks every file carrying a generator signature (`# AutoRankOFF`, `# HiddenTanks-Generator`) as **MODIFIED** — including deep parent folders. After restore the marks clear by themselves.
+- The explorer marks every file carrying a generator signature (`HuntezPatch - Generated`) as **MODIFIED** — including deep parent folders. After restore the marks clear by themselves.
 
 ## Interface Overview
 
@@ -149,6 +150,7 @@ All settings (language, theme, path, mods, project, mode, DLC flag, window geome
 | `! NON-DVPL skips DVPL file` | Same as above: informational hint, not an error. |
 | `No backup for <mod>` on restore | Generate the mod at least once first. |
 | Rank celebration still pops up | Regenerate AutoRanksOFF (the `ranksAvailable` master switch is required) after returning the original. |
+| Purple checker instead of dice | Regenerate RandomTankSelector after returning the original (the icon file may be missing). |
 | Game updated | Re-run Generate; then check the MODIFIED marks. |
 
 ## Project Structure
@@ -159,7 +161,7 @@ HuntezPatch/
 ├── requirements.txt
 ├── start_program.bat / autoinstall_modules.bat
 ├── config.json              # generated: your settings (not in git)
-├── core/                    # dvpl codec, file ops, HiddenTanks + AutoRanksOFF engines
+├── core/                    # dvpl codec, file ops, per-mod engines (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank)
 ├── gui/                     # Tkinter interface (tiles, explorer, popups, log)
 ├── locales/                 # ru/en/uk/de/tr/pl interface strings
 ├── Documentation/           # this manual in 6 languages

@@ -30,7 +30,7 @@ if sys.platform == 'win32':
     except Exception:
         pass
 
-VERSION = "v1.00"
+VERSION = "v1.01"
 
 
 class App:
@@ -55,6 +55,7 @@ class App:
         mods = self.config.get('mods', ['hidden_tanks'])
         self.mod_hidden_var = tk.BooleanVar(value='hidden_tanks' in mods)
         self.mod_autoranks_var = tk.BooleanVar(value='autoranks' in mods)
+        self.mod_randomtank_var = tk.BooleanVar(value='random_tank' in mods)
 
         self._dlc_popup = None
         self._dlc_outside_binding = None
@@ -110,6 +111,8 @@ class App:
             mods.append('hidden_tanks')
         if self.mod_autoranks_var.get():
             mods.append('autoranks')
+        if self.mod_randomtank_var.get():
+            mods.append('random_tank')
         return mods
 
     def save_state(self):
@@ -172,24 +175,28 @@ class App:
         self.ar_tile = ModTile(lp, variable=self.mod_autoranks_var,
                                on_toggle=self.on_mods_change,
                                on_help=self.show_autoranks_help)
-        self.ar_tile.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(0, 8))
+        self.ar_tile.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(0, 6))
+        self.rt_tile = ModTile(lp, variable=self.mod_randomtank_var,
+                               on_toggle=self.on_mods_change,
+                               on_help=self.show_randomtank_help)
+        self.rt_tile.grid(row=3, column=0, sticky=(tk.W, tk.E), pady=(0, 8))
 
         self.project_label = ttk.Label(lp)
-        self.project_label.grid(row=3, column=0, sticky=tk.W, pady=(0, 2))
+        self.project_label.grid(row=4, column=0, sticky=tk.W, pady=(0, 2))
         self.seg_project = SegmentedControl(
             lp, values=('wargaming', 'lesta'),
             variable=self.project_var, command=self.on_project_seg, width=13)
-        self.seg_project.grid(row=4, column=0, sticky=(tk.W, tk.E), pady=(0, 8))
+        self.seg_project.grid(row=5, column=0, sticky=(tk.W, tk.E), pady=(0, 8))
 
         self.dvpl_label = ttk.Label(lp)
-        self.dvpl_label.grid(row=5, column=0, sticky=tk.W, pady=(0, 2))
+        self.dvpl_label.grid(row=6, column=0, sticky=tk.W, pady=(0, 2))
         self.seg_dvpl = SegmentedControl(
             lp, values=('DVPL', 'NON-DVPL'),
             variable=self.dvpl_var, command=self.on_dvpl_seg, width=13)
-        self.seg_dvpl.grid(row=6, column=0, sticky=(tk.W, tk.E), pady=(0, 8))
+        self.seg_dvpl.grid(row=7, column=0, sticky=(tk.W, tk.E), pady=(0, 8))
 
         self.dlc_frame = ttk.LabelFrame(lp, padding="6")
-        self.dlc_frame.grid(row=7, column=0, sticky=(tk.W, tk.E))
+        self.dlc_frame.grid(row=8, column=0, sticky=(tk.W, tk.E))
         self.dlc_frame.columnconfigure(0, weight=1)
         self.dlc_check = ttk.Checkbutton(self.dlc_frame, variable=self.dlc_var,
                                          command=self.on_dlc_change)
@@ -200,7 +207,7 @@ class App:
         self.btn_dlc_folder.grid(row=2, column=0, sticky=(tk.W, tk.E))
 
         actions = ttk.Frame(lp)
-        actions.grid(row=9, column=0, sticky=(tk.W, tk.E, tk.S), pady=(8, 0))
+        actions.grid(row=10, column=0, sticky=(tk.W, tk.E, tk.S), pady=(8, 0))
         actions.columnconfigure(0, weight=1)
         self.btn_run = ttk.Button(actions, command=self.toggle_run_popup)
         self.btn_run.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 4))
@@ -211,8 +218,8 @@ class App:
 
         # spacer pushes actions to the bottom so fullscreen has no dead zone
         self.left_spacer = ttk.Frame(lp)
-        self.left_spacer.grid(row=8, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        lp.rowconfigure(8, weight=1)
+        self.left_spacer.grid(row=9, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        lp.rowconfigure(9, weight=1)
 
         # Right: big notebook fills all remaining space
         self.notebook = ttk.Notebook(self.main_frame)
@@ -302,8 +309,11 @@ class App:
         game_path = self.game_path_var.get().strip()
         dlc_root = get_dlc_root(self.project_var.get())
         sections = []
+        mod_titles = {'hidden_tanks': self.loc('mod_hidden_tanks'),
+                      'autoranks': self.loc('mod_autoranks'),
+                      'random_tank': self.loc('mod_random_tank')}
         for mid in self.selected_mods():
-            title = self.loc('mod_hidden_tanks') if mid == 'hidden_tanks' else self.loc('mod_autoranks')
+            title = mod_titles.get(mid, mid)
             rows = []
             for rel in _orc.mod_rel_paths(mid):
                 plain = os.path.join(game_path, "Data", rel)
@@ -737,6 +747,11 @@ class App:
         show_help_dialog(self.root, self.loc('help_autoranks_title'),
                          self.loc('help_autoranks_body'), colors=self._help_colors)
 
+    def show_randomtank_help(self):
+        self._close_all_popups()
+        show_help_dialog(self.root, self.loc('help_random_tank_title'),
+                         self.loc('help_random_tank_body'), colors=self._help_colors)
+
     # ---------- log helpers ----------
     def log(self, message):
         self.log_widget.log(message)
@@ -769,6 +784,8 @@ class App:
                                self.loc('tile_ht_meta'))
         self.ar_tile.set_texts(self.loc('mod_autoranks'), self.loc('mod_autoranks_desc'),
                                self.loc('tile_ar_meta'))
+        self.rt_tile.set_texts(self.loc('mod_random_tank'), self.loc('mod_random_tank_desc'),
+                               self.loc('tile_rt_meta'))
         self.btn_run.config(text=self.loc('btn_run'))
         self.btn_restore.config(text=self.loc('btn_restore'))
         self.btn_stats.config(text=self.loc('btn_stats'))
@@ -922,6 +939,7 @@ class App:
         try:
             self.ht_tile.refresh()
             self.ar_tile.refresh()
+            self.rt_tile.refresh()
             self.seg_project.refresh()
             self.seg_dvpl.refresh()
         except Exception:
@@ -974,6 +992,7 @@ class App:
                 pass
         self.ht_tile._locked = busy
         self.ar_tile._locked = busy
+        self.rt_tile._locked = busy
         try:
             if busy:
                 self.bar.set_values(0, 0, self._progress_text(0, 0))
@@ -1103,6 +1122,14 @@ class App:
         if "autoranks" in stats:
             self.log(f"\n{self.loc('stats_autoranks_title')}:")
             for d in stats["autoranks"]:
+                if not d.get('found'):
+                    self.log(f"  ✗ {d['rel']}")
+                else:
+                    where = "DLC" if d.get('is_dlc') else "Game"
+                    self.log(f"  {d['rel']} [{where}]: {d['would_change']} edit(s)")
+        if "random_tank" in stats:
+            self.log(f"\n{self.loc('stats_randomtank_title')}:")
+            for d in stats["random_tank"]:
                 if not d.get('found'):
                     self.log(f"  ✗ {d['rel']}")
                 else:

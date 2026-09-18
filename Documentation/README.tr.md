@@ -4,9 +4,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.00**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
-İki mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları gösterir) ve **AutoRanksOFF**
-(hangar arayüzündeki rütbe kilitlerini kaldırır).
+**HuntezPatch v1.01**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
+Üç mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları gösterir), **AutoRanksOFF**
+(hangar arayüzündeki rütbe kilitlerini kaldırır) ve **RandomTankSelector** (hangara zarlı rastgele tank düğmesi ekler).
 
 > **Diğer dillerde belgeler:**
 > [🇬🇧 English](README.en.md) · [🇷🇺 Русский](README.ru.md) · [🇺🇦 Українська](README.uk.md) ·
@@ -40,12 +40,13 @@
 |-----|----------|------------------------------|
 | **HiddenTanks** | Araştırma ağacındaki TÜM gizli tankları gösterir (premium, koleksiyonluk, test, kaldırılmış). Satın alma yine geliştirici tekliflerine bağlıdır — mod yalnızca gösterir. Seviye içi sıralama: **sıradan → koleksiyonluk → premium**, grup içinde sınıfa göre (**HT → MT → AT → TD**). | `Configs/TechTree/*_tree.yaml` (9 ulus), `XML/item_defs/vehicles/*/list.xml` (9 ulus) |
 | **AutoRanksOFF** | Rütbe kilitlerini kaldırır: Savaş düğmesi hep görünür, rütbe ipuçları gizlenir, rütbe olayları silinir, “tankın rütbe kazandı” kutlaması hiç çıkmaz. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
+| **RandomTankSelector** | Hangar tank paneline iki zarlı bir düğme ekler — basınca rastgele tank seçilir. Zar simgesi her üretimde oluşturulur. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, yeni dosyalar) |
 
 Aynı bilgi uygulamada mod kartındaki **?** düğmesindedir.
 
 ## Özellikler
 
-- Tek araçta iki mod, bağımsız seçilir (kart onay kutuları).
+- Tek araçta üç mod, bağımsız seçilir (kart onay kutuları).
 - **Üret** (aşamalı: temp → yedek → değiştir) ve **Dışa aktar** (paylaşıma hazır `Mod` + `Backup` paketi) işlemleri.
 - **DVPL / NON-DVPL** dosya kipleri; DLC dosyaları her zaman DVPL.
 - Otomatik uyarılı **DLC (mikro güncelleme) desteği**, `packs` klasörünü tek tıkla açma.
@@ -57,7 +58,7 @@ Aynı bilgi uygulamada mod kartındaki **?** düğmesindedir.
 ## Gereksinimler
 
 - **Windows** ve **Python 3.8+** (`python --version`).
-- `requirements.txt` bağımlılıkları: `lz4`, `PyYAML` (`tkinter` gömülü).
+- `requirements.txt` bağımlılıkları: `lz4`, `PyYAML`, `Pillow` (`tkinter` gömülü).
 
 ## Kurulum
 
@@ -128,7 +129,7 @@ result/BlitzMods_<modlar>_<sürüm>/
 
 - Üretim, mod başına yedekleri `<oyun>/BlitzMods_Backup/<mod>/{Game,DLC}/...` altında tutar.
 - **↩ Orijinali geri yükle** bunları yerine kopyalar (DLC yine salt-okunur).
-- Gezgin, üretici imzalı her dosyayı (`# AutoRankOFF`, `# HiddenTanks-Generator`) **DEĞİŞTİRİLDİ** olarak işaretler — üst klasörler dahil. Geri yüklemede işaretler kendiliğinden söner.
+- Gezgin, üretici imzalı her dosyayı (`HuntezPatch - Generated`) **DEĞİŞTİRİLDİ** olarak işaretler — üst klasörler dahil. Geri yüklemede işaretler kendiliğinden söner.
 
 ## Arayüz
 
@@ -149,6 +150,7 @@ Tüm ayarlar otomatik kaydedilir ve açılışta geri gelir. İlk açılışta d
 | `! NON-DVPL, DVPL dosyasını atlıyor` | Bilgi uyarısıdır, hata değil — yukarıya bakın. |
 | Geri yüklemede `{mod} için yedek yok` | Önce modu en az bir kez üretin. |
 | Rütbe kutlaması yine çıkıyor | AutoRanksOFF'u yeniden üretin (`ranksAvailable` ana şalteri gerekir), önce orijinali döndürün. |
+| Zar yerine mor dama | Önce orijinali döndürüp RandomTankSelector'ü yeniden üretin (simge dosyası eksik). |
 | Oyun güncellendi | Üretimi yeniden çalıştırın, DEĞİŞTİRİLDİ işaretlerini kontrol edin. |
 
 ## Proje Yapısı
@@ -159,7 +161,7 @@ HuntezPatch/
 ├── requirements.txt
 ├── start_program.bat / autoinstall_modules.bat
 ├── config.json              # üretilir: ayarlarınız (git'te yok)
-├── core/                    # DVPL codec, dosya işlemleri, mod motorları
+├── core/                    # DVPL codec, dosya işlemleri, mod motorları (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank)
 ├── gui/                     # arayüz (kartlar, gezgin, açılırlar, günlük)
 ├── locales/                 # arayüz metinleri ru/en/uk/de/tr/pl
 ├── Documentation/           # bu kılavuz, 6 dilde
