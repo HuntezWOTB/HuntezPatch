@@ -18,8 +18,18 @@ ICON_RES_PATH = "~res:/Gfx/Lobby/icons/randomtankselector_button_icon"
 
 # Disabled while the player is ready in a prebattle (platoon etc.), mirroring
 # OwnedTankCell ("not playerReadyForPrebattle"): grey like the tank carousel
-# until READY is toggled off.
+# until READY is toggled off. The prebattleType check matters: leaving a
+# squad while READY resets the type to UNDEFINED while accountInfo stays
+# stale-ready, so without it the button gets stuck grey.
 READY_GUARD = (
+    "(isNull(prebattle) or isNull(prebattle.settings)"
+    " or prebattle.settings.prebattleType == PrebattleType.UNDEFINED"
+    " or isNull(prebattle.accountInfo) or isNull(prebattle.accountInfo.tank)"
+    " or not prebattle.accountInfo.isReady)"
+)
+
+# v1.02 guard (no prebattleType check) — replaced on upgrade.
+OLD_READY_GUARD = (
     "(isNull(prebattle) or isNull(prebattle.settings)"
     " or isNull(prebattle.accountInfo) or isNull(prebattle.accountInfo.tank)"
     " or not prebattle.accountInfo.isReady)"

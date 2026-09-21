@@ -1,7 +1,7 @@
 """RandomTankSelector operation: insert the button into TanksPanel.yaml."""
 from ..headers import normalize_text_header
 from .constants import (
-    YAML_BUTTON_BLOCK, ENABLED_EXPR, READY_GUARD,
+    YAML_BUTTON_BLOCK, ENABLED_EXPR, READY_GUARD, OLD_READY_GUARD,
     _RE_YAML_CLASS, _RE_YAML_FILTER_NAME,
 )
 
@@ -21,14 +21,18 @@ def modify_yaml_text(text, filename=""):
         notes.append("header added")
 
     if any('name: "RandomTankButtonHolder"' in ln for ln in lines):
-        # Upgrade path v1.01 -> v1.02: old installs only check
-        # tanks.Size() > 1, so the dice stays clickable while READY.
-        # Replace with the ready-guard expression (idempotent).
+        # Upgrade paths: v1.01 only checks tanks.Size() > 1; v1.02 guard
+        # lacks the prebattleType check and gets stuck grey after leaving
+        # a squad while READY. Replace with the current guard (idempotent).
         if READY_GUARD not in text and any(OLD_ENABLED_LINE in ln for ln in lines):
             lines = [ln.replace(OLD_ENABLED_LINE, '"enabled": "' + ENABLED_EXPR + '"')
                      for ln in lines]
             changes += 1
             notes.append("RandomTankButton enabled upgraded with ready-guard")
+        elif READY_GUARD not in text and any(OLD_READY_GUARD in ln for ln in lines):
+            lines = [ln.replace(OLD_READY_GUARD, READY_GUARD) for ln in lines]
+            changes += 1
+            notes.append("RandomTankButton ready-guard extended with prebattleType check")
         new_text = "\n".join(lines) + ("\n" if had_trailing_nl else "")
         return new_text, changes, notes
 
