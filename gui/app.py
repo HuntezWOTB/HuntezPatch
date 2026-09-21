@@ -30,7 +30,7 @@ if sys.platform == 'win32':
     except Exception:
         pass
 
-VERSION = "v1.01"
+VERSION = "v1.02"
 
 
 class App:

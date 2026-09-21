@@ -455,12 +455,14 @@ def restore_mods(game_path, mod_ids, dlc_root, log=print, tr=None, progress_cb=N
                 for f in files:
                     src = os.path.join(dirpath, f)
                     rel = os.path.relpath(src, src_root)
-                    jobs.append((src, os.path.join(base, rel), prefix == "DLC"))
+                    jobs.append((mod_id, src, os.path.join(base, rel), prefix == "DLC"))
     total = len(jobs)
     tick = _make_ticker(progress_cb, total)
-    for src, dst, readonly in jobs:
+    restored_mods = set()
+    for mod_id, src, dst, readonly in jobs:
         install_one(src, dst, set_readonly=readonly)
         log(t('log_restored_file', file=dst))
+        restored_mods.add(mod_id)
         tick(1)
     # Added files (dice icon, generated regions) have no original to restore:
     # remove them when their mod is restored and no backup exists for them.
@@ -469,6 +471,23 @@ def restore_mods(game_path, mod_ids, dlc_root, log=print, tr=None, progress_cb=N
             if not base:
                 continue
             _remove_added_file(game_path, mod_id, prefix, base, installed, log_key, log, t)
+    # Backups hold the saved originals — once they are back in place the
+    # copies served their purpose, so drop them (a fresh generate recreates
+    # the backup). Mods with no restored files keep their backups.
+    for mod_id in sorted(restored_mods):
+        root = os.path.join(game_path, BACKUP_DIR_NAME, mod_id)
+        try:
+            shutil.rmtree(root, ignore_errors=True)
+            if not os.path.exists(root):
+                log(t('log_backup_removed', file=root))
+        except Exception as e:
+            log(t('log_error', error=str(e)))
+    try:
+        parent = os.path.join(game_path, BACKUP_DIR_NAME)
+        if os.path.isdir(parent) and not os.listdir(parent):
+            os.rmdir(parent)
+    except Exception:
+        pass
     if progress_cb is not None:
         try:
             progress_cb(total, total)

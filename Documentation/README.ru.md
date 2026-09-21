@@ -4,7 +4,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.01** — генератор модов для **Tanks Blitz** (Lesta Games) и **World of Tanks Blitz** (Wargaming).
+**HuntezPatch v1.02** — генератор модов для **Tanks Blitz** (Lesta Games) и **World of Tanks Blitz** (Wargaming).
 Собирает три мода: **HiddenTanks** (показывает скрытые танки в дереве исследований), **AutoRanksOFF**
 (убирает ранговые блокировки интерфейса ангара) и **RandomTankSelector** (добавляет кнопку-кубики случайного танка в ангар).
 
@@ -128,7 +128,7 @@ result/BlitzMods_<моды>_<версия>/
 ## Бэкап и восстановление
 
 - Генерация хранит бэкапы в `<игра>/BlitzMods_Backup/<мод>/{Game,DLC}/...`.
-- **↩ Вернуть оригинал** копирует их обратно (DLC — снова read-only).
+- **↩ Вернуть оригинал** копирует их обратно (DLC — снова read-only), а затем удаляет папку бэкапа мода — оригиналы своё отработали, новая генерация создаст бэкап заново.
 - Проводник помечает статусом **МОДИФИЦИРОВАН** каждый файл с сигнатурой генератора (`HuntezPatch - Generated`), включая все папки выше. После восстановления метки гаснут сами.
 
 ## Обзор интерфейса

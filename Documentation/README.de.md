@@ -4,7 +4,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.01** ist ein Mod-Generator für **World of Tanks Blitz** (Wargaming) und **Tanks Blitz** (Lesta Games).
+**HuntezPatch v1.02** ist ein Mod-Generator für **World of Tanks Blitz** (Wargaming) und **Tanks Blitz** (Lesta Games).
 Er erstellt drei Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsbaum), **AutoRanksOFF**
 (entfernt die Rang-Sperren der Hangar-Oberfläche) und **RandomTankSelector** (Würfel-Button für Zufallspanzer im Hangar).
 
@@ -82,7 +82,7 @@ Keine Installation nötig — das Programm ist portabel. Einstellungen liegen in
 2. **Projekt** (`Wargaming` / `Lesta Games`) und **DVPL-Modus** wählen (siehe unten).
 3. Mods anhaken.
 4. **▶ Ausführen** → **Generieren (Ersetzen)** (oder **Generieren (Export)** für ein teilbares Paket).
-5. Spiel starten und prüfen. Rollback jederzeit mit **↩ Original wiederherstellen**.
+5. Spiel starten und prüfen. Rollback jederzeit mit **↩ Originale wiederherstellen**.
 
 ## Vorgangsmodi
 
@@ -128,7 +128,7 @@ result/BlitzMods_<Mods>_<Version>/
 ## Backup und Wiederherstellung
 
 - Generieren sichert pro Mod unter `<Spiel>/BlitzMods_Backup/<Mod>/{Game,DLC}/...`.
-- **↩ Original wiederherstellen** kopiert sie zurück (DLC wieder read-only).
+- **↩ Originale wiederherstellen** kopiert sie zurück (DLC wieder read-only) und löscht danach den Backup-Ordner des Mods — die gesicherten Originale haben ihren Zweck erfüllt, ein neues Generieren legt das Backup neu an.
 - Der Browser markiert jede Datei mit Generatorsignatur (`HuntezPatch - Generated`) als **MODIFIZIERT** — inklusive aller Ordner darüber. Nach Wiederherstellung erlöschen die Markierungen von selbst.
 
 ## Oberfläche

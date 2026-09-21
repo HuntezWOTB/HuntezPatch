@@ -1,6 +1,11 @@
 """RandomTankSelector operation: insert the button into TanksPanel.yaml."""
 from ..headers import normalize_text_header
-from .constants import YAML_BUTTON_BLOCK, _RE_YAML_CLASS, _RE_YAML_FILTER_NAME
+from .constants import (
+    YAML_BUTTON_BLOCK, ENABLED_EXPR, READY_GUARD,
+    _RE_YAML_CLASS, _RE_YAML_FILTER_NAME,
+)
+
+OLD_ENABLED_LINE = '"enabled": "tanks.Size() > 1"'
 
 
 def modify_yaml_text(text, filename=""):
@@ -16,6 +21,14 @@ def modify_yaml_text(text, filename=""):
         notes.append("header added")
 
     if any('name: "RandomTankButtonHolder"' in ln for ln in lines):
+        # Upgrade path v1.01 -> v1.02: old installs only check
+        # tanks.Size() > 1, so the dice stays clickable while READY.
+        # Replace with the ready-guard expression (idempotent).
+        if READY_GUARD not in text and any(OLD_ENABLED_LINE in ln for ln in lines):
+            lines = [ln.replace(OLD_ENABLED_LINE, '"enabled": "' + ENABLED_EXPR + '"')
+                     for ln in lines]
+            changes += 1
+            notes.append("RandomTankButton enabled upgraded with ready-guard")
         new_text = "\n".join(lines) + ("\n" if had_trailing_nl else "")
         return new_text, changes, notes
 

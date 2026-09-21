@@ -16,6 +16,19 @@ ICON_SIZE = 32
 ICON_2X_SIZE = 64
 ICON_RES_PATH = "~res:/Gfx/Lobby/icons/randomtankselector_button_icon"
 
+# Disabled while the player is ready in a prebattle (platoon etc.), mirroring
+# OwnedTankCell ("not playerReadyForPrebattle"): grey like the tank carousel
+# until READY is toggled off.
+READY_GUARD = (
+    "(isNull(prebattle) or isNull(prebattle.settings)"
+    " or isNull(prebattle.accountInfo) or isNull(prebattle.accountInfo.tank)"
+    " or not prebattle.accountInfo.isReady)"
+)
+
+ENABLED_EXPR = (
+    "tanks.Size() > 1 and " + READY_GUARD
+)
+
 YAML_BUTTON_BLOCK = (
     '    -   class: "UIControl"\n'
     '        name: "RandomTankButtonHolder"\n'
@@ -37,9 +50,9 @@ YAML_BUTTON_BLOCK = (
     '                    "sound": "eButtonSound.CHOOSE"\n'
     '                    "buttonSize": "56"\n'
     '                    "imageSize": "32"\n'
-    f'                    "image": "\\"{ICON_RES_PATH}\\""\n'
-    '                    "enabled": "tanks.Size() > 1"\n'
-    '                eventActions:\n'
+     f'                    "image": "\\"{ICON_RES_PATH}\\""\n'
+     '                    "enabled": "' + ENABLED_EXPR + '"\n'
+     '                eventActions:\n'
     '                - ["ON_CLICK_BUTTON", "SELECT_RANDOM_TANK", ""]\n'
     '        bindings:\n'
     '        - ["visible", "not isNull(account) and not account.tutorialData.isTutorialActive"]\n'
@@ -48,27 +61,30 @@ YAML_BUTTON_BLOCK = (
 ACTION_BLOCK = (
     'action SELECT_RANDOM_TANK\n'
     '{\n'
-    '  PlaySound(sound="GUI/buttons/choose");\n'
-    '  ChangeData(currentIndex, rand(Size(tanks)));\n'
+    '  if ' + READY_GUARD + '\n'
+    '  {\n'
+    '    PlaySound(sound="GUI/buttons/choose");\n'
+    '    ChangeData(currentIndex, rand(Size(tanks)));\n'
     '\n'
-    '  if((format("TankCell:%(tNation):%(tName)",'
+    '    if((format("TankCell:%(tNation):%(tName)",'
     ' { "tNation" = str(tanks[currentIndex].info.nation, eNation, "autotests");'
     ' "tName" = tanks[currentIndex].info.technicalName; })) == selectedCellName)\n'
-    '  {\n'
-    '    Event("SELECT_RANDOM_TANK");\n'
-    '  }\n'
-    '  else\n'
-    '  {\n'
-    '    ScrollToEnsureControlOnScreen("**/PlayerTanks/"'
+    '    {\n'
+    '      Event("SELECT_RANDOM_TANK");\n'
+    '    }\n'
+    '    else\n'
+    '    {\n'
+    '      ScrollToEnsureControlOnScreen("**/PlayerTanks/"'
     ' + (format("TankCell:%(tNation):%(tName)",'
     ' { "tNation" = str(tanks[currentIndex].info.nation, eNation, "autotests");'
     ' "tName" = tanks[currentIndex].info.technicalName; })),'
     ' xPolicy=eScrollToControlPolicy.kNearest);\n'
-    '    Wait(0.05); // ensure tank is loaded\n'
-    '    DirectEvent("ON_TANK_PRESS", "**/PlayerTanks/"'
+    '      Wait(0.05); // ensure tank is loaded\n'
+    '      DirectEvent("ON_TANK_PRESS", "**/PlayerTanks/"'
     ' + (format("TankCell:%(tNation):%(tName)",'
     ' { "tNation" = str(tanks[currentIndex].info.nation, eNation, "autotests");'
     ' "tName" = tanks[currentIndex].info.technicalName; })));\n'
+    '    }\n'
     '  }\n'
     '}\n'
 )

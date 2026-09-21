@@ -4,7 +4,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.01** to generator modów do **World of Tanks Blitz** (Wargaming) i **Tanks Blitz** (Lesta Games).
+**HuntezPatch v1.02** to generator modów do **World of Tanks Blitz** (Wargaming) i **Tanks Blitz** (Lesta Games).
 Buduje trzy mody: **HiddenTanks** (pokazuje ukryte czołgi w drzewku badań), **AutoRanksOFF**
 (usuwa blokady rang z interfejsu hangaru) i **RandomTankSelector** (przycisk-kości losujące czołg w hangarze).
 
@@ -82,7 +82,7 @@ Instalacja nie jest potrzebna — program jest przenośny. Ustawienia w `config.
 2. Wybierz **projekt** (`Wargaming` / `Lesta Games`) i **tryb DVPL** (patrz niżej).
 3. Zaznacz mody.
 4. Kliknij **▶ Wykonaj** → **Generuj (Zamień)** (albo **Generuj (Eksport)** na paczkę do rozdawania).
-5. Uruchom grę i sprawdź. Wycofanie w każdej chwili — **↩ Przywróć oryginał**.
+5. Uruchom grę i sprawdź. Wycofanie w każdej chwili — **↩ Przywróć oryginały**.
 
 ## Tryby operacji
 
@@ -128,7 +128,7 @@ result/BlitzMods_<mody>_<wersja>/
 ## Backup i przywracanie
 
 - Generowanie trzyma backupy w `<gra>/BlitzMods_Backup/<mod>/{Game,DLC}/...`.
-- **↩ Przywróć oryginał** kopiuje je z powrotem (DLC znowu read-only).
+- **↩ Przywróć oryginały** kopiuje je z powrotem (DLC znowu read-only), a następnie usuwa folder backupu moda — zapisane oryginały spełniły swoje zadanie, nowa generacja utworzy backup od nowa.
 - Eksplorator oznacza statusem **ZMODYFIKOWANY** każdy plik z sygnaturą generatora (`HuntezPatch - Generated`), łącznie z folderami wyżej. Po przywróceniu oznaczenia gasną same.
 
 ## Przegląd interfejsu

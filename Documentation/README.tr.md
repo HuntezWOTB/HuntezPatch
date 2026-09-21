@@ -4,7 +4,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.01**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
+**HuntezPatch v1.02**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
 Üç mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları gösterir), **AutoRanksOFF**
 (hangar arayüzündeki rütbe kilitlerini kaldırır) ve **RandomTankSelector** (hangara zarlı rastgele tank düğmesi ekler).
 
@@ -82,7 +82,7 @@ Kurulum gerekmez — program taşınabilirdir. Ayarlar `main.py` yanındaki `con
 2. **Proje** (`Wargaming` / `Lesta Games`) ve **DVPL kipi** seçin (aşağıya bakın).
 3. İstediğiniz modları işaretleyin.
 4. **▶ Çalıştır** → **Üret (Değiştir)** (paylaşılacak paket için **Üret (Dışa aktar)**).
-5. Oyunu açıp kontrol edin. Geri alma her zaman: **↩ Orijinali geri yükle**.
+5. Oyunu açıp kontrol edin. Geri alma her zaman: **↩ Orijinalleri geri yükle**.
 
 ## İşlem Kipleri
 
@@ -128,7 +128,7 @@ result/BlitzMods_<modlar>_<sürüm>/
 ## Yedek ve Geri Yükleme
 
 - Üretim, mod başına yedekleri `<oyun>/BlitzMods_Backup/<mod>/{Game,DLC}/...` altında tutar.
-- **↩ Orijinali geri yükle** bunları yerine kopyalar (DLC yine salt-okunur).
+- **↩ Orijinalleri geri yükle** bunları yerine kopyalar (DLC yine salt-okunur) ve ardından modun yedek klasörünü siler — saklanan orijinaller işini gördü, yeni üretim yedeği yeniden oluşturur.
 - Gezgin, üretici imzalı her dosyayı (`HuntezPatch - Generated`) **DEĞİŞTİRİLDİ** olarak işaretler — üst klasörler dahil. Geri yüklemede işaretler kendiliğinden söner.
 
 ## Arayüz

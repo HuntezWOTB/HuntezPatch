@@ -12,9 +12,12 @@ Reference behaviour (OFF-GetRank_MOD original/edited pairs):
      (UnlockRank, UnlockFirstRank, FirstRankSoundPlayed, OnPromoRankInfoClicked);
      drop the item line if only empty strings remain; drop an eventActions:
      key left with no items.
-  9. ranksAvailable binding (Hangar): "not isNull(selectedTank) and ..." ->
-     "isNull(selectedTank) and ..." — effectively disables ranks, so the
-     "your tank has a rank" celebration never triggers.
+   9. ranksAvailable binding (Hangar): "not isNull(selectedTank) and ..." ->
+      "isNull(selectedTank) and ..." — effectively disables ranks, so the
+      "your tank has a rank" celebration never triggers.
+   10. GameModeAbilities (Hangar only): append "and not trainingVisible" to the
+      "tankAbilitiesVisible and not isInSquad" condition, so the small
+      "Способности" popup no longer shows in the training room.
 Everything else (incl. the rankUnlockRequired binding definition itself and
 the UnlockRankHint condition) is left untouched, byte-for-byte.
 Idempotent: re-running an edited file yields 0 changes.
@@ -51,6 +54,15 @@ def modify_autoranks_text(text, filename=""):
             if n:
                 line = new_line
                 changes += n
+
+        # 2b. GameModeAbilities ("Способности"): hide in training room.
+        # Hangar.yaml defines trainingVisible (prebattleType == TRAINING);
+        # vanilla condition shows abilities there, which is wrong for that mode.
+        if "Hangar.yaml" in filename and "tankAbilitiesVisible" in line and "not isInSquad" in line \
+                and "condition" in line and "not trainingVisible" not in line:
+            line = line.replace("tankAbilitiesVisible and not isInSquad",
+                                "tankAbilitiesVisible and not isInSquad and not trainingVisible")
+            changes += 1
 
         # 3. conditions: drop the rank clause, keep the expression valid.
         if "rankUnlockRequired" in line and "condition" in line:
