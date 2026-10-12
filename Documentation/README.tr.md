@@ -1,10 +1,12 @@
 # HuntezPatch — Belgeler (Türkçe)
 
+<img src="../huntezpatch_icon.png" width="96" alt="HuntezPatch icon">
+
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.02**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
+**HuntezPatch v1.03**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
 Üç mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları gösterir), **AutoRanksOFF**
 (hangar arayüzündeki rütbe kilitlerini kaldırır) ve **RandomTankSelector** (hangara zarlı rastgele tank düğmesi ekler).
 

@@ -1,10 +1,12 @@
 # HuntezPatch — Документація (Українська)
 
+<img src="../huntezpatch_icon.png" width="96" alt="HuntezPatch icon">
+
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.02** — генератор модів для **Tanks Blitz** (Lesta Games) та **World of Tanks Blitz** (Wargaming).
+**HuntezPatch v1.03** — генератор модів для **Tanks Blitz** (Lesta Games) та **World of Tanks Blitz** (Wargaming).
 Збирає три моди: **HiddenTanks** (показує приховані танки в дереві досліджень), **AutoRanksOFF**
 (прибирає рангові блокування інтерфейсу ангара) та **RandomTankSelector** (додає кнопку-кубики випадкового танка в ангар).
 

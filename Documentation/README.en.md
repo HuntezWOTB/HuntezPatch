@@ -1,10 +1,12 @@
 # HuntezPatch — Documentation (English)
 
+<img src="../huntezpatch_icon.png" width="96" alt="HuntezPatch icon">
+
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.02** is a mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games).
+**HuntezPatch v1.03** is a mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games).
 It builds three mods: **HiddenTanks** (reveals hidden tanks in the research tree), **AutoRanksOFF**
 (removes rank gating from the hangar UI) and **RandomTankSelector** (adds a random-tank dice button to the hangar).
 
