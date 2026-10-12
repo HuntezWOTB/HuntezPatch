@@ -82,7 +82,7 @@ Instalacja nie jest potrzebna — program jest przenośny. Ustawienia w `config.
 2. Wybierz **projekt** (`Wargaming` / `Lesta Games`) i **tryb DVPL** (patrz niżej).
 3. Zaznacz mody.
 4. Kliknij **▶ Wykonaj** → **Generuj (Zamień)** (albo **Generuj (Eksport)** na paczkę do rozdawania).
-5. Uruchom grę i sprawdź. Wycofanie w każdej chwili — **↩ Przywróć oryginały**.
+5. Uruchom grę i sprawdź. Wycofanie w każdej chwili — **↩ Przywróć oryginał**.
 
 ## Tryby operacji
 
@@ -127,8 +127,8 @@ result/BlitzMods_<mody>_<wersja>/
 
 ## Backup i przywracanie
 
-- Generowanie trzyma backupy w `<gra>/BlitzMods_Backup/<mod>/{Game,DLC}/...`.
-- **↩ Przywróć oryginały** kopiuje je z powrotem (DLC znowu read-only), a następnie usuwa folder backupu moda — zapisane oryginały spełniły swoje zadanie, nowa generacja utworzy backup od nowa.
+- Generowanie trzyma backupy w `%LocalAppData%/HuntezProjects/HuntezPatch/backups/<gra>_<hash>/<mod>/{Game,DLC}/...` (klucz folderu gry, instalacje się nie mieszają).
+- **↩ Przywróć oryginał** kopiuje je z powrotem (DLC znowu read-only).
 - Eksplorator oznacza statusem **ZMODYFIKOWANY** każdy plik z sygnaturą generatora (`HuntezPatch - Generated`), łącznie z folderami wyżej. Po przywróceniu oznaczenia gasną same.
 
 ## Przegląd interfejsu

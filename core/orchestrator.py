@@ -3,7 +3,7 @@
 Generation policy (safe):
   1. read originals (game / DLC)
   2. transform in memory, write to temp staging dir first
-  3. backup originals to <game>/BlitzMods_Backup/<mod_id>/{Game,DLC}
+  3. backup originals to %LocalAppData%/HuntezProjects/HuntezPatch/backups/<game>_<hash>/<mod_id>/{Game,DLC}
   4. copy staged files over the originals (DLC -> read-only)
 
 Export policy:
@@ -25,11 +25,10 @@ from core.file_ops import (
 )
 from core.Mods.hidden_tanks import NATIONS, process_xml, generate_tree_yaml, get_nation_stat, classify_tank
 from core.Mods.autoranks import AUTORANKS_FILES, modify_autoranks_text
+from core.paths import backup_root
 from core.Mods.random_tank import (
     RANDOMTANK_FILES, ICON_RELS, modify_randomtank_text, make_icon_payloads,
 )
-
-BACKUP_DIR_NAME = "BlitzMods_Backup"
 
 MOD_IDS = ("hidden_tanks", "autoranks", "random_tank")
 
@@ -247,7 +246,7 @@ def _run_randomtank(game_path, dvpl_mode, use_dlc, dlc_root, log, tr,
 # ---------------- Public: generate / export / restore / stats ----------------
 
 def _backup_path(game_path, mod_id, is_dlc, src_path, dlc_root):
-    root = os.path.join(game_path, BACKUP_DIR_NAME, mod_id)
+    root = os.path.join(backup_root(game_path), mod_id)
     if is_dlc and dlc_root:
         rel = os.path.relpath(src_path, dlc_root)
         return os.path.join(root, "DLC", rel)
@@ -257,7 +256,7 @@ def _backup_path(game_path, mod_id, is_dlc, src_path, dlc_root):
 
 def _remove_added_file(game_path, mod_id, prefix, base, installed, log_key, log, t):
     """Delete an added (never backed up) file on restore."""
-    backup = os.path.join(game_path, BACKUP_DIR_NAME, mod_id,
+    backup = os.path.join(backup_root(game_path), mod_id,
                           prefix, os.path.relpath(installed, base))
     if not os.path.exists(backup) and os.path.exists(installed):
         try:
@@ -360,7 +359,11 @@ def export_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, tr=
                 progress_cb=None):
     version = get_game_version(game_path)
     bundle = f"BlitzMods_{'+'.join(mod_ids)}_{version}"
-    result_root = os.path.join(os.getcwd(), "result", bundle)
+    try:
+        from core.paths import result_path
+        result_root = result_path(bundle)
+    except Exception:
+        result_root = os.path.join(os.getcwd(), "result", bundle)
     mod_root = os.path.join(result_root, "Mod")
     backup_root = os.path.join(result_root, "Backup")
     os.makedirs(mod_root, exist_ok=True)
@@ -443,7 +446,7 @@ def restore_mods(game_path, mod_ids, dlc_root, log=print, tr=None, progress_cb=N
     # collect first so progress has an upfront total
     jobs = []
     for mod_id in mod_ids:
-        root = os.path.join(game_path, BACKUP_DIR_NAME, mod_id)
+        root = os.path.join(backup_root(game_path), mod_id)
         if not os.path.exists(root):
             log(t('log_no_backup_for', mod=mod_id))
             continue
@@ -455,14 +458,12 @@ def restore_mods(game_path, mod_ids, dlc_root, log=print, tr=None, progress_cb=N
                 for f in files:
                     src = os.path.join(dirpath, f)
                     rel = os.path.relpath(src, src_root)
-                    jobs.append((mod_id, src, os.path.join(base, rel), prefix == "DLC"))
+                    jobs.append((src, os.path.join(base, rel), prefix == "DLC"))
     total = len(jobs)
     tick = _make_ticker(progress_cb, total)
-    restored_mods = set()
-    for mod_id, src, dst, readonly in jobs:
+    for src, dst, readonly in jobs:
         install_one(src, dst, set_readonly=readonly)
         log(t('log_restored_file', file=dst))
-        restored_mods.add(mod_id)
         tick(1)
     # Added files (dice icon, generated regions) have no original to restore:
     # remove them when their mod is restored and no backup exists for them.
@@ -471,23 +472,6 @@ def restore_mods(game_path, mod_ids, dlc_root, log=print, tr=None, progress_cb=N
             if not base:
                 continue
             _remove_added_file(game_path, mod_id, prefix, base, installed, log_key, log, t)
-    # Backups hold the saved originals — once they are back in place the
-    # copies served their purpose, so drop them (a fresh generate recreates
-    # the backup). Mods with no restored files keep their backups.
-    for mod_id in sorted(restored_mods):
-        root = os.path.join(game_path, BACKUP_DIR_NAME, mod_id)
-        try:
-            shutil.rmtree(root, ignore_errors=True)
-            if not os.path.exists(root):
-                log(t('log_backup_removed', file=root))
-        except Exception as e:
-            log(t('log_error', error=str(e)))
-    try:
-        parent = os.path.join(game_path, BACKUP_DIR_NAME)
-        if os.path.isdir(parent) and not os.listdir(parent):
-            os.rmdir(parent)
-    except Exception:
-        pass
     if progress_cb is not None:
         try:
             progress_cb(total, total)

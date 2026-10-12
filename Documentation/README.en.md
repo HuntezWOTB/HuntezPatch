@@ -82,7 +82,7 @@ No installation is needed — the program is portable. Settings live in `config.
 2. Pick the **project** (`Wargaming` / `Lesta Games`) and **DVPL mode** (see below).
 3. Tick the mods you want.
 4. Press **▶ Run** → **Generate (Replace)** (or **Generate (Export)** for a shareable bundle).
-5. Launch the game and check the result. Roll back anytime with **↩ Restore originals**.
+5. Launch the game and check the result. Roll back anytime with **↩ Restore original**.
 
 ## Operation Modes
 
@@ -127,8 +127,8 @@ result/BlitzMods_<mods>_<version>/
 
 ## Backup and Restore
 
-- Generate keeps per-mod backups in `<game>/BlitzMods_Backup/<mod>/{Game,DLC}/...`.
-- **↩ Restore originals** copies them back (DLC files back to read-only) and then deletes the mod's backup folder — the saved originals served their purpose, a fresh generate recreates the backup.
+- Generate keeps per-mod backups in `%LocalAppData%/HuntezProjects/HuntezPatch/backups/<game>_<hash>/<mod>/{Game,DLC}/...` (keyed by game folder, installs never mix).
+- **↩ Restore original** copies them back (DLC files back to read-only).
 - The explorer marks every file carrying a generator signature (`HuntezPatch - Generated`) as **MODIFIED** — including deep parent folders. After restore the marks clear by themselves.
 
 ## Interface Overview
@@ -148,7 +148,7 @@ All settings (language, theme, path, mods, project, mode, DLC flag, window geome
 | `Invalid game path (no Data folder)` | Point the app at the folder that contains `Data/`. |
 | `Missing file … skipping` in NON-DVPL | The game ships `.dvpl` here — switch to **DVPL** mode (or unpack the files). |
 | `! NON-DVPL skips DVPL file` | Same as above: informational hint, not an error. |
-| `No saved originals for <mod>` on restore | Generate the mod at least once first. |
+| `No backup for <mod>` on restore | Generate the mod at least once first. |
 | Rank celebration still pops up | Regenerate AutoRanksOFF (the `ranksAvailable` master switch is required) after returning the original. |
 | Purple checker instead of dice | Regenerate RandomTankSelector after returning the original (the icon file may be missing). |
 | Game updated | Re-run Generate; then check the MODIFIED marks. |

@@ -1,8 +1,10 @@
 import json
 import os
 
-CONFIG_FILE = "config.json"
+from core.paths import APP_VERSION, config_path, resource_path
+
 DEFAULT_CONFIG = {
+    "version": APP_VERSION,
     "language": "ru",
     "theme": "dark",
     "dvpl_mode": "DVPL",
@@ -17,8 +19,7 @@ DEFAULT_CONFIG = {
 def _available_languages():
     """Language codes shipping in locales/*.json (e.g. {'ru', 'en'})."""
     try:
-        base = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                            "locales")
+        base = resource_path("locales")
         if not os.path.isdir(base):
             base = "locales"
         return {f[:-5].lower() for f in os.listdir(base) if f.endswith(".json")}
@@ -56,22 +57,45 @@ def get_system_theme():
     return "light"
 
 
-def load_config():
-    if os.path.exists(CONFIG_FILE):
-        try:
-            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
-                cfg = json.load(f)
-            merged = DEFAULT_CONFIG.copy()
-            merged.update(cfg)
-            return merged
-        except Exception:
-            pass
+def _fresh_config():
+    """Defaults for the current version (system language/theme detected)."""
     cfg = DEFAULT_CONFIG.copy()
+    cfg["version"] = APP_VERSION
     cfg["language"] = get_system_language()
     cfg["theme"] = get_system_theme()
     return cfg
 
 
+def load_config():
+    """Load config; wipe it entirely when the app version changed."""
+    fresh = _fresh_config()
+    path = config_path()
+    if not os.path.exists(path):
+        return fresh
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+    except Exception:
+        return fresh
+    if cfg.get("version") != APP_VERSION:
+        # Version changed -> drop the whole old config, start clean.
+        try:
+            os.remove(path)
+        except Exception:
+            pass
+        return fresh
+    merged = fresh
+    merged.update(cfg)
+    merged["version"] = APP_VERSION
+    return merged
+
+
 def save_config(config):
-    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+    config["version"] = APP_VERSION
+    path = config_path()
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+    except Exception:
+        pass
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(config, f, indent=4, ensure_ascii=False)

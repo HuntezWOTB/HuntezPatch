@@ -82,7 +82,7 @@ Kurulum gerekmez — program taşınabilirdir. Ayarlar `main.py` yanındaki `con
 2. **Proje** (`Wargaming` / `Lesta Games`) ve **DVPL kipi** seçin (aşağıya bakın).
 3. İstediğiniz modları işaretleyin.
 4. **▶ Çalıştır** → **Üret (Değiştir)** (paylaşılacak paket için **Üret (Dışa aktar)**).
-5. Oyunu açıp kontrol edin. Geri alma her zaman: **↩ Orijinalleri geri yükle**.
+5. Oyunu açıp kontrol edin. Geri alma her zaman: **↩ Orijinali geri yükle**.
 
 ## İşlem Kipleri
 
@@ -127,8 +127,8 @@ result/BlitzMods_<modlar>_<sürüm>/
 
 ## Yedek ve Geri Yükleme
 
-- Üretim, mod başına yedekleri `<oyun>/BlitzMods_Backup/<mod>/{Game,DLC}/...` altında tutar.
-- **↩ Orijinalleri geri yükle** bunları yerine kopyalar (DLC yine salt-okunur) ve ardından modun yedek klasörünü siler — saklanan orijinaller işini gördü, yeni üretim yedeği yeniden oluşturur.
+- Üretim, mod başına yedekleri `%LocalAppData%/HuntezProjects/HuntezPatch/backups/<oyun>_<hash>/<mod>/{Game,DLC}/...` altında tutar (oyun klasörüne göre ayrılır, kurulumlar karışmaz).
+- **↩ Orijinali geri yükle** bunları yerine kopyalar (DLC yine salt-okunur).
 - Gezgin, üretici imzalı her dosyayı (`HuntezPatch - Generated`) **DEĞİŞTİRİLDİ** olarak işaretler — üst klasörler dahil. Geri yüklemede işaretler kendiliğinden söner.
 
 ## Arayüz

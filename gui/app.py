@@ -12,6 +12,7 @@ import traceback
 from tkinter import ttk, filedialog, messagebox
 
 from core.config import load_config, save_config
+from core.paths import APP_VERSION, resource_path
 from core.localization import load_locales, get_localized_string
 from core.dlc_utils import get_dlc_root, open_folder_in_explorer
 from core import orchestrator
@@ -30,7 +31,7 @@ if sys.platform == 'win32':
     except Exception:
         pass
 
-VERSION = "v1.02"
+VERSION = APP_VERSION
 
 
 class App:
@@ -1137,9 +1138,22 @@ class App:
                     self.log(f"  {d['rel']} [{where}]: {d['would_change']} edit(s)")
 
 
+def _set_window_icon(root):
+    """huntezpatch_icon.png from sources (or bundled in exe); silent if missing."""
+    try:
+        icon = resource_path("huntezpatch_icon.png")
+        if os.path.exists(icon):
+            img = tk.PhotoImage(file=icon)
+            root.iconphoto(True, img)
+            root._icon_img = img  # keep a reference, else GC clears it
+    except Exception:
+        pass
+
+
 def main():
     root = tk.Tk()
     root.title("Blitz Mods Utility")
+    _set_window_icon(root)
     root.minsize(920, 660)
     try:
         cfg = load_config()

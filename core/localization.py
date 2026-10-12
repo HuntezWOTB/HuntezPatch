@@ -1,12 +1,18 @@
 import json
 import os
 
+try:
+    from core.paths import resource_path
+except Exception:
+    def resource_path(*parts):
+        return os.path.join(*parts)
+
 LOCALES_DIR = "locales"
 
 
 def load_locales():
     locales = {}
-    base = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), LOCALES_DIR)
+    base = resource_path(LOCALES_DIR)
     if not os.path.exists(base):
         base = LOCALES_DIR
     if not os.path.exists(base):
