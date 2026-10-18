@@ -12,6 +12,23 @@ def get_dlc_root(project):
     return os.path.join(home, "AppData", "Local", "wotblitz", "packs")
 
 
+def get_data_root(project):
+    """Return the project data root covering both packs and region_cache.
+
+    Wargaming (WoT Blitz): %LocalAppData%/wotblitz
+    (DAVAProject/region_cache + packs/).
+    Lesta (Tanks Blitz): %userprofile%/Documents/TanksBlitz
+    (region_cache/ + packs/ directly inside).
+    """
+    home = os.path.expanduser("~")
+    if project == 'lesta':
+        return os.path.join(home, "Documents", "TanksBlitz")
+    base = os.environ.get("LOCALAPPDATA")
+    if not base:
+        base = os.path.join(home, "AppData", "Local")
+    return os.path.join(base, "wotblitz")
+
+
 def open_folder_in_explorer(path):
     """Open a folder in the OS file manager; create it if missing."""
     try:

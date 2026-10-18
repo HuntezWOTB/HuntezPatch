@@ -33,8 +33,27 @@ from ..headers import normalize_text_header
 from .items import _transform_item_line
 
 
-def modify_autoranks_text(text, filename=""):
-    """Apply AutoRanksOFF transforms. Returns (new_text, changes:int, notes:list[str])."""
+def modify_autoranks_text(text, filename="", project="wargaming"):
+    """Apply AutoRanksOFF transforms. Returns (new_text, changes:int, notes:list[str]).
+
+    WG and Lesta use separate structures: Lesta has no rankUnlockRequired
+    gating. Lesta yaml is handled by patch_lesta, the ceremony script
+    (.actions) and init animations (.animation, auto-grant trigger) plus
+    the native-pushed rank toast popups by their own patch_lesta transforms.
+    """
+    if (project or "wargaming").lower() == "lesta":
+        fname = (filename or "").replace("\\", "/")
+        if 'TankRankAvailableNotification' in fname or 'TankRanksUnlockedNotification' in fname:
+            from .patch_lesta import modify_autoranks_notification_lesta
+            return modify_autoranks_notification_lesta(text, filename)
+        if fname.endswith(".animation") or fname.endswith(".animation.dvpl"):
+            from .patch_lesta import modify_autoranks_animation_lesta
+            return modify_autoranks_animation_lesta(text, filename)
+        if fname.endswith(".actions") or fname.endswith(".actions.dvpl"):
+            from .patch_lesta import modify_autoranks_actions_lesta
+            return modify_autoranks_actions_lesta(text, filename)
+        from .patch_lesta import modify_autoranks_text_lesta
+        return modify_autoranks_text_lesta(text, filename)
     notes = []
     changes = 0
     lines = text.splitlines()

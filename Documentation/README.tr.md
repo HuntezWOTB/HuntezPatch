@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.04**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
+**HuntezPatch v1.05**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
 Dört mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları gösterir), **AutoRanksOFF**
 (hangar arayüzündeki rütbe kilitlerini kaldırır) ve **RandomTankSelector** (hangara zarlı rastgele tank düğmesi ekler) ve **SelectableClusters** (küme seçimli sunucu listesi).
 
@@ -43,7 +43,7 @@ Dört mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları göst
 | **HiddenTanks** | Araştırma ağacındaki TÜM gizli tankları gösterir (premium, koleksiyonluk, test, kaldırılmış). Satın alma yine geliştirici tekliflerine bağlıdır — mod yalnızca gösterir. Seviye içi sıralama: **sıradan → koleksiyonluk → premium**, grup içinde sınıfa göre (**HT → MT → AT → TD**). | `Configs/TechTree/*_tree.yaml` (9 ulus), `XML/item_defs/vehicles/*/list.xml` (9 ulus) |
 | **AutoRanksOFF** | Rütbe kilitlerini kaldırır: Savaş düğmesi hep görünür, rütbe ipuçları gizlenir, rütbe olayları silinir, “tankın rütbe kazandı” kutlaması hiç çıkmaz. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
 | **RandomTankSelector** | Hangar tank paneline iki zarlı bir düğme ekler — basınca rastgele tank seçilir. Zar simgesi her üretimde oluşturulur. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, yeni dosyalar) |
-| **SelectableClusters** | Harita yerine sunucu listesi; küme seçimi (EU_C0…) doğrudan listeden, kümeler kendi sunucularının altında. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; Data ve region_cache içindeki bölgeler |
+| **SelectableClusters** | Harita yerine sunucu listesi; küme seçimi (EU_C0…) doğrudan listeden, kümeler kendi sunucularının altında. Yalnızca WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; Data ve region_cache içindeki bölgeler |
 
 Aynı bilgi uygulamada mod kartındaki **?** düğmesindedir.
 
@@ -53,7 +53,7 @@ Aynı bilgi uygulamada mod kartındaki **?** düğmesindedir.
 - **Üret** (aşamalı: temp → yedek → değiştir) ve **Dışa aktar** (paylaşıma hazır `Mod` + `Backup` paketi) işlemleri.
 - **DVPL / NON-DVPL** dosya kipleri; DLC dosyaları her zaman DVPL.
 - Otomatik uyarılı **DLC (mikro güncelleme) desteği**, `packs` klasörünü tek tıkla açma.
-- Yerleşik **dosya gezgini** (`Oyun dosyaları` / `DLC dosyaları` sekmeleri): tembel ağaç, mod dosyası vurgulama, `DEĞİŞTİRİLDİ` durum sütunu, yalnızca-mod listesi.
+- Yerleşik **dosya gezgini** (`Oyun dosyaları` / `Veriler` sekmeleri): tembel ağaç, mod dosyası vurgulama, `DEĞİŞTİRİLDİ` durum sütunu, yalnızca-mod listesi.
 - Kopyalaması kolay günlük (`Ctrl+C` / `Ctrl+A`, sağ tık menüsü, iki klavye düzeni).
 - Dosya sayaçlı ilerleme çubuğu, arka plan işlemleri (arayüz donmaz).
 - 6 arayüz dili, açık/koyu tema, taşınabilir ayarlar.
@@ -85,7 +85,7 @@ Kurulum gerekmez — program taşınabilirdir. Ayarlar `main.py` yanındaki `con
 ## Hızlı Başlangıç
 
 1. **Oyun klasörünü** seçin (içinde `Data/` olan).
-2. **Proje** (`Wargaming` / `Lesta Games`) ve **DVPL kipi** seçin (aşağıya bakın).
+2. **Proje** (`WoT Blitz` / `Tanks Blitz`) ve **DVPL kipi** seçin (aşağıya bakın).
 3. İstediğiniz modları işaretleyin.
 4. **▶ Çalıştır** → **Üret (Değiştir)** (paylaşılacak paket için **Üret (Dışa aktar)**).
 5. Oyunu açıp kontrol edin. Geri alma her zaman: **↩ Orijinali geri yükle**.
@@ -112,8 +112,8 @@ Oyun mikro güncelleme getirdiyse dosyaları temelleri ezer — onlar da yamalan
 
 | Proje | `packs` klasörü |
 |-------|-----------------|
-| Wargaming | `%userprofile%/AppData/Local/wotblitz/packs` |
-| Lesta Games | `%userprofile%/Documents/TanksBlitz/packs` |
+| WoT Blitz | `%userprofile%/AppData/Local/wotblitz/packs` |
+| Tanks Blitz | `%userprofile%/Documents/TanksBlitz/packs` |
 
 - Dahil etmek için **DLC dosyalarını değiştir** seçeneğini açın.
 - Modlara ait DLC dosyaları varken seçenek kapalıysa uygulama uyarır.
@@ -142,7 +142,7 @@ result/BlitzMods_<modlar>_<sürüm>/
 - **Başlık**: ad, dil düğmesi (`RU/EN/…` açılır), tema düğmesi (`☀/☾`).
 - **Oyun yolu**: boydan boya satır, geçerlilik noktası ve sağda Gözat düğmesi.
 - **Sol sütun** (kaydırmalı): mod kartları (tıkla aç/kapat, `?` bilgi), Proje ve DVPL anahtarları, DLC bloğu, işlem düğmeleri.
-- **Sağ**: büyük sekmeler — **Günlük**, **Oyun dosyaları**, **DLC dosyaları**. Dosya sekmelerinde Yenile / Gezginde aç ve **Yalnızca mod dosyaları** listesi (moda göre hiyerarşi, boyut ve Oyun/DLC durumu).
+- **Sağ**: büyük sekmeler — **Günlük**, **Oyun dosyaları**, **Veriler**. Dosya sekmelerinde Yenile / Gezginde aç ve **Yalnızca mod dosyaları** listesi (moda göre hiyerarşi, boyut ve Oyun/DLC durumu).
 - **Durum çubuğu**: durum noktası + yazı, canlı ilerleme (`İlerleme: %42 · 5/12`, boşta `© Huntez`), sürüm.
 
 Tüm ayarlar otomatik kaydedilir ve açılışta geri gelir. İlk açılışta dil ve tema işletim sisteminden alınır.

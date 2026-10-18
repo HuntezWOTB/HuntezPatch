@@ -24,7 +24,11 @@ from core.file_ops import (
     make_staging, install_one, get_game_version,
 )
 from core.Mods.hidden_tanks import NATIONS, process_xml, generate_tree_yaml, get_nation_stat, classify_tank
-from core.Mods.autoranks import AUTORANKS_FILES, modify_autoranks_text
+from core.Mods.autoranks import (
+    AUTORANKS_FILES,
+    autoranks_files_for_project,
+    modify_autoranks_text,
+)
 from core.paths import backup_root
 from core.Mods.random_tank import (
     RANDOMTANK_FILES, ICON_RELS, make_icon_payloads, modify_randomtank_text,
@@ -37,14 +41,14 @@ from core.Mods.server_select import (
 MOD_IDS = ("hidden_tanks", "autoranks", "random_tank", "server_select")
 
 
-def mod_rel_paths(mod_id):
+def mod_rel_paths(mod_id, project="wargaming"):
     if mod_id == "hidden_tanks":
         rels = []
         for _code, (_name, tree_rel, list_rel) in NATIONS.items():
             rels.extend([tree_rel, list_rel])
         return rels
     if mod_id == "autoranks":
-        return list(AUTORANKS_FILES)
+        return list(autoranks_files_for_project(project))
     if mod_id == "random_tank":
         return list(RANDOMTANK_FILES) + list(ICON_RELS)
     if mod_id == "server_select":
@@ -52,12 +56,12 @@ def mod_rel_paths(mod_id):
     return []
 
 
-def check_dlc_presence(dlc_root, mod_ids):
+def check_dlc_presence(dlc_root, mod_ids, project="wargaming"):
     """Return {mod_id: [rel,...]} of DLC files that exist on disk."""
     from core.dlc_utils import find_existing_dlc_files
     out = {}
     for mid in mod_ids:
-        out[mid] = find_existing_dlc_files(dlc_root, mod_rel_paths(mid))
+        out[mid] = find_existing_dlc_files(dlc_root, mod_rel_paths(mid, project))
     return out
 
 
@@ -132,7 +136,7 @@ def _count_mod_jobs(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, project="w
             if tree_src and list_src:
                 total += 2
     if "autoranks" in mod_ids:
-        for rel in AUTORANKS_FILES:
+        for rel in autoranks_files_for_project(project):
             src, _ = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
             if src:
                 total += 1
@@ -184,9 +188,10 @@ def _run_hidden(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, do_write, tick
 
 # ---------------- AutoRanks ----------------
 
-def _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, do_write, tick=None):
+def _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, do_write, tick=None,
+                 project="wargaming"):
     stats = {'files_total': 0, 'files_changed': 0, 'edits': 0, 'details': []}
-    for rel in AUTORANKS_FILES:
+    for rel in autoranks_files_for_project(project):
         src, is_dlc = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
         if not src:
             log((tr('log_autoranks_missing', file=rel) if tr else f"  missing: {rel}, skipping"))
@@ -195,7 +200,7 @@ def _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, do_write, t
         stats['files_total'] += 1
         log((tr('log_reading_file', file=src) if tr else f"  Reading: {src}"))
         info = read_physical(src)
-        new_text, changes, _notes = modify_autoranks_text(info['text'], rel)
+        new_text, changes, _notes = modify_autoranks_text(info['text'], rel, project)
         if changes > 0:
             stats['files_changed'] += 1
             stats['edits'] += changes
@@ -387,7 +392,8 @@ def generate_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, t
                 st = _stage_write(staging, "ar_" + os.path.basename(rel).replace("/", "_").replace("\\", "_"),
                                   new_text, info['encoding'], info['is_dvpl'], info['comp'])
                 pending.append((st, src, is_dlc, _backup_path(game_path, "autoranks", is_dlc, src, dlc_root)))
-            all_stats["autoranks"] = _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, commit_ar, tick=tick)
+            all_stats["autoranks"] = _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, commit_ar, tick=tick,
+                                                     project=project)
 
         if "random_tank" in mod_ids:
             def commit_rt(rel, src, is_dlc, info, new_text, changes):
@@ -523,7 +529,8 @@ def export_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, tr=
             want_suffix = bool(is_dlc or info['is_dvpl'])
             _export_write(mod_dst_b, new_text, info['encoding'], want_suffix, info['comp'], want_suffix)
             _export_write(bak_dst_b, info['text'], info['encoding'], want_suffix, info['comp'], want_suffix)
-        _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, commit_ar, tick=tick)
+        _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, commit_ar, tick=tick,
+                       project=project)
 
     if "random_tank" in mod_ids:
         from core.dvpl_utils import write_dvpl as _write_dvpl, DVPL_TYPE_NONE as _DVPL_NONE
@@ -632,7 +639,7 @@ def collect_stats(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, t
                   progress_cb=None, project="wargaming"):
     """Read-only stats (no writes)."""
     total = (len(NATIONS) if "hidden_tanks" in mod_ids else 0) + \
-            (len(AUTORANKS_FILES) if "autoranks" in mod_ids else 0) + \
+            (len(autoranks_files_for_project(project)) if "autoranks" in mod_ids else 0) + \
             (len(RANDOMTANK_FILES) if "random_tank" in mod_ids else 0) + \
             (len(SERVER_SELECT_FILES) + len(LEGACY_REVERT_FILES) if "server_select" in mod_ids else 0) + \
             (len(_region_cache_files(game_path, project)) if "server_select" in mod_ids else 0)
@@ -649,14 +656,14 @@ def collect_stats(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, t
         out["hidden_tanks"] = stats
     if "autoranks" in mod_ids:
         details = []
-        for rel in AUTORANKS_FILES:
+        for rel in autoranks_files_for_project(project):
             src, is_dlc = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
             tick(1)
             if not src:
                 details.append({'rel': rel, 'found': False})
                 continue
             info = read_physical(src)
-            _new, changes, _n = modify_autoranks_text(info['text'], rel)
+            _new, changes, _n = modify_autoranks_text(info['text'], rel, project)
             details.append({'rel': rel, 'found': True, 'is_dlc': is_dlc,
                             'src': src, 'would_change': changes})
         out["autoranks"] = details

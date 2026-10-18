@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.04** — генератор модов для **Tanks Blitz** (Lesta Games) и **World of Tanks Blitz** (Wargaming).
+**HuntezPatch v1.05** — генератор модов для **World of Tanks Blitz** (Wargaming) и **Tanks Blitz** (Lesta Games).
 Собирает четыре мода: **HiddenTanks** (показывает скрытые танки в дереве исследований), **AutoRanksOFF**
 (убирает ранговые блокировки интерфейса ангара) и **RandomTankSelector** (добавляет кнопку-кубики случайного танка в ангар) и **SelectableClusters** (список серверов с выбором кластера).
 
@@ -41,9 +41,9 @@
 | Мод | Что делает | Файлы (относительно `Data/`) |
 |-----|------------|------------------------------|
 | **HiddenTanks** | Показывает ВСЕ скрытые танки в дереве исследований (премиум, коллекционные, тестовые, удалённые). Покупка по-прежнему зависит от акций разработчиков — мод только показывает технику. Сортировка скрытых по уровню: **обычные → коллекционные → премиум**, внутри группы по классу (**ЛТ → СТ → ТТ → ПТ**). | `Configs/TechTree/*_tree.yaml` (9 наций), `XML/item_defs/vehicles/*/list.xml` (9 наций) |
-| **AutoRanksOFF** | Убирает ранговые блокировки: кнопка «В бой» всегда видима, подсказки про ранг скрыты, события прокачки удалены, празднование «У вашего танка появился ранг!» не всплывает. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
-| **RandomTankSelector** | Добавляет кнопку с двумя кубиками в панель танков ангара — по нажатию выбирается случайный танк. Иконка кубиков генерируется при каждой генерации. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, новые файлы) |
-| **SelectableClusters** | Список серверов вместо карты; выбор кластера (EU_C0…) прямо из списка, кластеры под своим сервером. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; регионы в Data и region_cache |
+| **AutoRanksOFF** | Убирает автовыдачу ранга: анимации инициализации больше не шлют UnlockFirstRank сами — ранг открывается только кнопкой «Повысить». Экран рангов работает как обычно. Убраны уведомления: тизер/счётчики и их звуки в ангаре, промо-попап, молния, фанфары церемонии. WG: эталонный патч rankUnlockRequired. Tanks Blitz: своя структура, принцип тот же. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` (+ `AchievementsTab.actions`, `NotEliteTankPanelInitialization.animation`, `TankRankInitialization.animation` только для Tanks Blitz) |
+| **RandomTankSelector** | Добавляет кнопку с двумя кубиками в панель танков ангара — по нажатию выбирается случайный танк. Иконка кубиков генерируется при каждой генерации. Только WoT Blitz: в Tanks Blitz есть официальная кнопка «ВЫБРАТЬ СЛУЧАЙНО» — мод там недоступен. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, новые файлы) |
+| **SelectableClusters** | Список серверов вместо карты; выбор кластера (EU_C0…) прямо из списка, кластеры под своим сервером. Только WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; регионы в Data и region_cache |
 
 Та же информация есть в программе по кнопке **?** на карточке мода.
 
@@ -53,7 +53,7 @@
 - Операции **Генерация** (стейджинг: temp → бэкап → замена) и **Экспорт** (папка `Mod` + `Backup` для распространения).
 - Режимы файлов **DVPL / NON-DVPL**; DLC-файлы всегда DVPL.
 - **Поддержка DLC (микрообновлений)** с авто-подсказкой и открытием папки `packs` в один клик.
-- Встроенный **проводник** (вкладки `Файлы игры` / `Файлы DLC`): ленивое дерево, подсветка файлов модов, колонка статуса `МОДИФИЦИРОВАН`, режим «Только файлы модов».
+- Встроенный **проводник** (вкладки `Файлы игры` / `Данные`): ленивое дерево, подсветка файлов модов, колонка статуса `МОДИФИЦИРОВАН`, режим «Только файлы модов».
 - Удобный журнал (копирование `Ctrl+C` / `Ctrl+A`, меню по правому клику, обе раскладки).
 - Прогресс-бар с числом файлов, фоновые операции (интерфейс не виснет).
 - 6 языков интерфейса, светлая/тёмная темы, портативные настройки.
@@ -85,7 +85,7 @@ python main.py
 ## Быстрый старт
 
 1. Укажите **папку игры** (ту, где лежит `Data/`), например `C:/Program Files/Steam/steamapps/common/World of Tanks Blitz`.
-2. Выберите **проект** (`Wargaming` / `Lesta Games`) и **режим DVPL** (см. ниже).
+2. Выберите **проект** (`WoT Blitz` / `Tanks Blitz`) и **режим DVPL** (см. ниже).
 3. Отметьте нужные моды.
 4. Нажмите **▶ Выполнить** → **Генерация (Замена)** (или **Генерация (Экспорт)** для переносимого пакета).
 5. Запустите игру и проверьте. Откат в любой момент — **↩ Вернуть оригинал**.
@@ -112,8 +112,8 @@ python main.py
 
 | Проект | Папка `packs` |
 |--------|---------------|
-| Wargaming | `%userprofile%/AppData/Local/wotblitz/packs` |
-| Lesta Games | `%userprofile%/Documents/TanksBlitz/packs` |
+| WoT Blitz | `%userprofile%/AppData/Local/wotblitz/packs` |
+| Tanks Blitz | `%userprofile%/Documents/TanksBlitz/packs` |
 
 - Включите **Изменять DLC файлы**, чтобы их захватить.
 - Если DLC-файлы модов есть, а галочка выключена — программа предупредит.
@@ -142,7 +142,7 @@ result/BlitzMods_<моды>_<версия>/
 - **Шапка**: название, кнопка языка (`RU/EN/…`, выборка), кнопка темы (`☀/☾`).
 - **Путь к игре**: строка во всю ширину с индикатором валидности и кнопкой Обзор справа.
 - **Левая колонка** (прокручивается): карточки модов (клик — вкл/выкл, `?` — справка), сегменты Проект и DVPL, блок DLC, кнопки действий.
-- **Справа**: большие вкладки — **Журнал**, **Файлы игры**, **Файлы DLC**. У файловых вкладок есть Обновить / В проводнике и режим **Только файлы модов** (иерархия по модам с размером и состоянием Игра/DLC).
+- **Справа**: большие вкладки — **Журнал**, **Файлы игры**, **Данные**. У файловых вкладок есть Обновить / В проводнике и режим **Только файлы модов** (иерархия по модам с размером и состоянием Игра/DLC).
 - **Статус-бар**: индикатор состояния, живой прогресс-бар (`Прогресс: 42% · 5/12`, в простое `© Huntez`), версия.
 
 Все настройки (язык, тема, путь, моды, проект, режим, DLC, геометрия окна) сохраняются автоматически и восстанавливаются при запуске. При самом первом запуске язык и тема берутся из системы.

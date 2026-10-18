@@ -14,7 +14,7 @@ from tkinter import ttk, filedialog, messagebox
 from core.config import load_config, save_config
 from core.paths import APP_VERSION, resource_path
 from core.localization import load_locales, get_localized_string
-from core.dlc_utils import get_dlc_root, open_folder_in_explorer
+from core.dlc_utils import get_data_root, get_dlc_root, open_folder_in_explorer
 from core import orchestrator
 from gui.widgets import (
     LogWidget, DlcFolderPopup, OptionsPopup, ChoicePopup, place_popup,
@@ -101,7 +101,45 @@ class App:
         self.refresh_path_status()
         self.refresh_dlc_hint()
         self.refresh_explorers()
+        self.refresh_server_tile()
+        self.refresh_random_tile()
         self.set_status('ready')
+
+    def _server_locked_by_project(self):
+        # SelectableClusters is WoT Blitz-only: Tanks Blitz has no server
+        # selection screen at the app level.
+        return self.project_var.get() == 'lesta'
+
+    def _random_locked_by_project(self):
+        # RandomTankSelector is WoT Blitz-only: Tanks Blitz ships the
+        # official "ВЫБРАТЬ СЛУЧАЙНО" picker (see filter dialog), so our
+        # custom dice button is unnecessary there.
+        return self.project_var.get() == 'lesta'
+
+    def refresh_server_tile(self):
+        locked = self._server_locked_by_project()
+        if locked:
+            self.mod_server_var.set(False)
+        self.ss_tile._locked = locked or self._busy
+        try:
+            self.ss_tile.refresh()
+        except Exception:
+            pass
+
+    def refresh_random_tile(self):
+        locked = self._random_locked_by_project()
+        if locked:
+            self.mod_randomtank_var.set(False)
+        self.rt_tile._locked = locked or self._busy
+        try:
+            self.rt_tile.refresh()
+        except Exception:
+            pass
+
+    def refresh_ar_meta(self):
+        # AutoRanksOFF touches 4 files on WG, 5 on Lesta (v2 structure).
+        meta = self.loc('tile_ar_meta_lesta') if self.project_var.get() == 'lesta' else self.loc('tile_ar_meta')
+        self.ar_tile.set_texts(self.loc('mod_autoranks'), self.loc('mod_autoranks_desc'), meta)
 
     # ---------- helpers ----------
     def loc(self, key, **kwargs):
@@ -247,7 +285,7 @@ class App:
         self.log_widget = LogWidget(self.log_tab)
         self.log_widget.pack(fill=tk.BOTH, expand=True)
 
-        # Tab 2: game files, Tab 3: DLC files
+        # Tab 2: game files, Tab 3: project data (packs + cache)
         self.game_tab = ttk.Frame(self.notebook, padding="6")
         self.notebook.add(self.game_tab, text='...')
         self.exp_game = self._build_explorer_tab(self.game_tab, which='game')
@@ -298,17 +336,29 @@ class App:
             exp['tree'].pack(fill=tk.BOTH, expand=True)
 
     def _expected_paths(self):
-        """(game_files, dlc_files): full paths of mod files for highlight."""
+        """(game_files, data_files): full paths of mod files for highlight.
+
+        The data tree is rooted at the project data dir, so data_files covers
+        both packs/ (DLC) and region_cache/ (server list cache) hits.
+        """
         from core import orchestrator as _orc
+        from core.Mods.server_select.cache import find_region_cache_files
         game_set, dlc_set = set(), set()
         game_path = self.game_path_var.get().strip()
-        dlc_root = get_dlc_root(self.project_var.get())
+        project = self.project_var.get()
+        dlc_root = get_dlc_root(project)
         for mid in self.selected_mods():
-            for rel in _orc.mod_rel_paths(mid):
+            for rel in _orc.mod_rel_paths(mid, project):
                 game_set.add(os.path.join(game_path, "Data", rel))
                 game_set.add(os.path.join(game_path, "Data", rel) + ".dvpl")
                 if dlc_root:
                     dlc_set.add(os.path.join(dlc_root, rel) + ".dvpl")
+            if mid == "server_select":
+                try:
+                    for cand in find_region_cache_files(game_path, project) or []:
+                        dlc_set.add(cand)
+                except Exception:
+                    pass
         return game_set, dlc_set
 
     def _mod_sections(self):
@@ -321,10 +371,11 @@ class App:
                       'autoranks': self.loc('mod_autoranks'),
                       'random_tank': self.loc('mod_random_tank'),
                       'server_select': self.loc('mod_server_select')}
+        project = self.project_var.get()
         for mid in self.selected_mods():
             title = mod_titles.get(mid, mid)
             rows = []
-            for rel in _orc.mod_rel_paths(mid):
+            for rel in _orc.mod_rel_paths(mid, project):
                 plain = os.path.join(game_path, "Data", rel)
                 dvpl = plain + ".dvpl"
                 parts = []
@@ -379,10 +430,10 @@ class App:
         self.exp_game['tree'].set_highlight(game_set)
         self.exp_game['tree'].set_modified(modset, mod_label)
         self.exp_game['tree'].set_root(game_path if game_path else None, placeholder)
-        dlc_root = get_dlc_root(self.project_var.get())
+        data_root = get_data_root(self.project_var.get())
         self.exp_dlc['tree'].set_highlight(dlc_set)
         self.exp_dlc['tree'].set_modified(modset, mod_label)
-        self.exp_dlc['tree'].set_root(dlc_root, self.loc('tree_no_folder'))
+        self.exp_dlc['tree'].set_root(data_root, self.loc('tree_no_folder'))
         self._rebuild_modviews()
 
     def update_explorer_texts(self):
@@ -412,7 +463,7 @@ class App:
         path = exp['tree'].selected_path()
         if not path:
             path = (self.game_path_var.get().strip() if which == 'game'
-                    else get_dlc_root(self.project_var.get()))
+                    else get_data_root(self.project_var.get()))
         if path:
             self.reveal_in_explorer(path)
 
@@ -552,6 +603,9 @@ class App:
 
     def on_project_seg(self, value):
         self.project_var.set(value)
+        self.refresh_server_tile()
+        self.refresh_random_tile()
+        self.refresh_ar_meta()
         self.save_state()
         self.refresh_dlc_hint()
         self.refresh_explorers()
@@ -597,8 +651,9 @@ class App:
     def refresh_dlc_hint(self):
         try:
             mods = self.selected_mods()
-            dlc_root = get_dlc_root(self.project_var.get())
-            presence = orchestrator.check_dlc_presence(dlc_root, mods) if mods else {}
+            project = self.project_var.get()
+            dlc_root = get_dlc_root(project)
+            presence = orchestrator.check_dlc_presence(dlc_root, mods, project) if mods else {}
             total = sum(len(v) for v in presence.values())
             if total > 0:
                 self.dlc_hint.config(text=self.loc('dlc_hint_found', count=total))
@@ -797,8 +852,7 @@ class App:
         self.mods_label.config(text=self.loc('frame_mods'))
         self.ht_tile.set_texts(self.loc('mod_hidden_tanks'), self.loc('mod_hidden_desc'),
                                self.loc('tile_ht_meta'))
-        self.ar_tile.set_texts(self.loc('mod_autoranks'), self.loc('mod_autoranks_desc'),
-                               self.loc('tile_ar_meta'))
+        self.refresh_ar_meta()
         self.rt_tile.set_texts(self.loc('mod_random_tank'), self.loc('mod_random_tank_desc'),
                                self.loc('tile_rt_meta'))
         self.ss_tile.set_texts(self.loc('mod_server_select'), self.loc('mod_server_select_desc'),
@@ -1011,8 +1065,8 @@ class App:
                 pass
         self.ht_tile._locked = busy
         self.ar_tile._locked = busy
-        self.rt_tile._locked = busy
-        self.ss_tile._locked = busy
+        self.rt_tile._locked = busy or self._random_locked_by_project()
+        self.ss_tile._locked = busy or self._server_locked_by_project()
         try:
             if busy:
                 self.bar.set_values(0, 0, self._progress_text(0, 0))

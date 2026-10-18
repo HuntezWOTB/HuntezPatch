@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.04** to generator modów do **World of Tanks Blitz** (Wargaming) i **Tanks Blitz** (Lesta Games).
+**HuntezPatch v1.05** to generator modów do **World of Tanks Blitz** (Wargaming) i **Tanks Blitz** (Lesta Games).
 Buduje cztery mody: **HiddenTanks** (pokazuje ukryte czołgi w drzewku badań), **AutoRanksOFF**
 (usuwa blokady rang z interfejsu hangaru) i **RandomTankSelector** (przycisk-kości losujące czołg w hangarze) i **SelectableClusters** (lista serwerów z wyborem klastra).
 
@@ -43,7 +43,7 @@ Buduje cztery mody: **HiddenTanks** (pokazuje ukryte czołgi w drzewku badań), 
 | **HiddenTanks** | Pokazuje WSZYSTKIE ukryte czołgi w drzewku badań (premium, kolekcjonerskie, testowe, usunięte). Zakup nadal zależy od ofert deweloperów — mod tylko pokazuje pojazdy. Sortowanie ukrytych na poziomie: **zwykłe → kolekcjonerskie → premium**, w grupie wg klasy (**LT → MT → HT → TD**). | `Configs/TechTree/*_tree.yaml` (9 nacji), `XML/item_defs/vehicles/*/list.xml` (9 nacji) |
 | **AutoRanksOFF** | Usuwa blokady rang: przycisk „Do boju“ zawsze widoczny, podpowiedzi o randze ukryte, eventy awansu usunięte, celebracja „twój czołg zdobył rangę” nigdy nie wyskakuje. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
 | **RandomTankSelector** | Dodaje przycisk z dwiema kośćmi do panelu czołgów — kliknięcie wybiera losowy czołg. Ikona kości jest generowana przy każdej generacji. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, nowe pliki) |
-| **SelectableClusters** | Lista serwerów zamiast mapy; wybór klastra (EU_C0…) prosto z listy, klastry pod własnym serwerem. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; regiony w Data i region_cache |
+| **SelectableClusters** | Lista serwerów zamiast mapy; wybór klastra (EU_C0…) prosto z listy, klastry pod własnym serwerem. Tylko WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; regiony w Data i region_cache |
 
 Te same informacje są w programie pod przyciskiem **?** na karcie moda.
 
@@ -53,7 +53,7 @@ Te same informacje są w programie pod przyciskiem **?** na karcie moda.
 - Operacje **Generuj** (staging: temp → backup → zamiana) i **Eksportuj** (paczka `Mod` + `Backup` do rozdawania).
 - Tryby plików **DVPL / NON-DVPL**; pliki DLC zawsze DVPL.
 - **Wsparcie DLC (mikroaktualizacji)** z auto-podpowiedzią i otwieraniem folderu `packs` jednym klikiem.
-- Wbudowany **eksplorator** (zakładki `Pliki gry` / `Pliki DLC`): leniwe drzewo, podświetlanie plików modów, kolumna statusu `ZMODYFIKOWANY`, widok „Tylko pliki modów”.
+- Wbudowany **eksplorator** (zakładki `Pliki gry` / `Dane`): leniwe drzewo, podświetlanie plików modów, kolumna statusu `ZMODYFIKOWANY`, widok „Tylko pliki modów”.
 - Wygodny dziennik (kopiowanie `Ctrl+C` / `Ctrl+A`, menu prawego przycisku, oba układy klawiatury).
 - Pasek postępu z liczbą plików, operacje w tle (interfejs nie wiesza się).
 - 6 języków, jasny/ciemny motyw, przenośne ustawienia.
@@ -85,7 +85,7 @@ Instalacja nie jest potrzebna — program jest przenośny. Ustawienia w `config.
 ## Szybki start
 
 1. Wskaż **folder gry** (ten z `Data/` w środku).
-2. Wybierz **projekt** (`Wargaming` / `Lesta Games`) i **tryb DVPL** (patrz niżej).
+2. Wybierz **projekt** (`WoT Blitz` / `Tanks Blitz`) i **tryb DVPL** (patrz niżej).
 3. Zaznacz mody.
 4. Kliknij **▶ Wykonaj** → **Generuj (Zamień)** (albo **Generuj (Eksport)** na paczkę do rozdawania).
 5. Uruchom grę i sprawdź. Wycofanie w każdej chwili — **↩ Przywróć oryginał**.
@@ -112,8 +112,8 @@ Jeśli gra przywiozła mikroaktualizację, jej pliki przykrywają bazowe — trz
 
 | Projekt | Folder `packs` |
 |---------|----------------|
-| Wargaming | `%userprofile%/AppData/Local/wotblitz/packs` |
-| Lesta Games | `%userprofile%/Documents/TanksBlitz/packs` |
+| WoT Blitz | `%userprofile%/AppData/Local/wotblitz/packs` |
+| Tanks Blitz | `%userprofile%/Documents/TanksBlitz/packs` |
 
 - Włącz **Modyfikuj pliki DLC**, by je objąć.
 - Jeśli pliki DLC modów istnieją, a checkbox jest wyłączony — program ostrzeże.
@@ -142,7 +142,7 @@ result/BlitzMods_<mody>_<wersja>/
 - **Nagłówek**: tytuł, przycisk języka (`RU/EN/…`, wyskakująca lista), przycisk motywu (`☀/☾`).
 - **Ścieżka do gry**: wiersz na całą szerokość ze wskaźnikiem poprawności i przyciskiem Przeglądaj po prawej.
 - **Lewa kolumna** (przewijana): karty modów (klik — wł/wył, `?` — pomoc), segmenty Projekt i DVPL, blok DLC, przyciski akcji.
-- **Po prawej**: duże zakładki — **Dziennik**, **Pliki gry**, **Pliki DLC**. Zakładki plików mają Odśwież / W eksploratorze i tryb **Tylko pliki modów** (hierarchia wg modów z rozmiarem i stanem Gra/DLC).
+- **Po prawej**: duże zakładki — **Dziennik**, **Pliki gry**, **Dane**. Zakładki plików mają Odśwież / W eksploratorze i tryb **Tylko pliki modów** (hierarchia wg modów z rozmiarem i stanem Gra/DLC).
 - **Pasek statusu**: wskaźnik stanu, żywy pasek postępu (`Postęp: 42% · 5/12`, w spoczynku `© Huntez`), wersja.
 
 Wszystkie ustawienia zapisują się automatycznie i wracają przy starcie. Przy pierwszym starcie język i motyw brane są z systemu.

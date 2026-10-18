@@ -40,7 +40,7 @@ def get_modified_files(game_path, mod_ids, dlc_root, project="wargaming"):
         return found
     for mid in (mod_ids or []):
         try:
-            rels = _orc.mod_rel_paths(mid)
+            rels = _orc.mod_rel_paths(mid, project)
         except Exception:
             continue
         for rel in rels:
