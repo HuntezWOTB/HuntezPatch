@@ -27,7 +27,7 @@ from core.Mods.hidden_tanks import NATIONS, process_xml, generate_tree_yaml, get
 from core.Mods.autoranks import AUTORANKS_FILES, modify_autoranks_text
 from core.paths import backup_root
 from core.Mods.random_tank import (
-    RANDOMTANK_FILES, ICON_RELS, make_icon_payloads,
+    RANDOMTANK_FILES, ICON_RELS, make_icon_payloads, modify_randomtank_text,
 )
 from core.Mods.server_select import (
     LEGACY_REVERT_FILES, SERVER_SELECT_FILES, modify_server_select_text,
