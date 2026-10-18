@@ -27,10 +27,14 @@ from core.Mods.hidden_tanks import NATIONS, process_xml, generate_tree_yaml, get
 from core.Mods.autoranks import AUTORANKS_FILES, modify_autoranks_text
 from core.paths import backup_root
 from core.Mods.random_tank import (
-    RANDOMTANK_FILES, ICON_RELS, modify_randomtank_text, make_icon_payloads,
+    RANDOMTANK_FILES, ICON_RELS, make_icon_payloads,
+)
+from core.Mods.server_select import (
+    LEGACY_REVERT_FILES, SERVER_SELECT_FILES, modify_server_select_text,
+    find_region_cache_files, region_cache_dir, prime_row_index,
 )
 
-MOD_IDS = ("hidden_tanks", "autoranks", "random_tank")
+MOD_IDS = ("hidden_tanks", "autoranks", "random_tank", "server_select")
 
 
 def mod_rel_paths(mod_id):
@@ -43,6 +47,8 @@ def mod_rel_paths(mod_id):
         return list(AUTORANKS_FILES)
     if mod_id == "random_tank":
         return list(RANDOMTANK_FILES) + list(ICON_RELS)
+    if mod_id == "server_select":
+        return list(SERVER_SELECT_FILES)
     return []
 
 
@@ -116,7 +122,7 @@ def _hidden_nation_pair(game_path, code, dvpl_mode, use_dlc, dlc_root, log, tr):
     }
 
 
-def _count_mod_jobs(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root):
+def _count_mod_jobs(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, project="wargaming"):
     """Upfront file count for progress (hidden: 2 per usable nation)."""
     total = 0
     if "hidden_tanks" in mod_ids:
@@ -136,6 +142,12 @@ def _count_mod_jobs(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root):
             if src:
                 total += 1
         total += len(ICON_RELS)  # generated dice icon (no source needed)
+    if "server_select" in mod_ids:
+        for rel in list(SERVER_SELECT_FILES) + list(LEGACY_REVERT_FILES):
+            src, _ = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
+            if src:
+                total += 1
+        total += len(_region_cache_files(game_path, project))
     return total
 
 
@@ -184,6 +196,69 @@ def _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, do_write, t
         log((tr('log_reading_file', file=src) if tr else f"  Reading: {src}"))
         info = read_physical(src)
         new_text, changes, _notes = modify_autoranks_text(info['text'], rel)
+        if changes > 0:
+            stats['files_changed'] += 1
+            stats['edits'] += changes
+        stats['details'].append({'rel': rel, 'src': src, 'is_dlc': is_dlc, 'changes': changes})
+        do_write(rel, src, is_dlc, info, new_text, changes)
+        if tick is not None:
+            tick(1)
+    return stats
+
+
+# ---------------- ServerSelect ----------------
+
+def _region_cache_files(game_path, project="wargaming"):
+    """Region-cache files the client actually reads (never raises)."""
+    try:
+        return list(find_region_cache_files(game_path, project) or [])
+    except Exception:
+        return []
+
+
+def _backup_path_cache(game_path, src):
+    return os.path.join(backup_root(game_path), "server_select", "Cache",
+                        os.path.basename(src))
+
+
+def _run_server_cache(game_path, project, log, tr, do_write, tick=None):
+    """Patch region_cache/*.yaml (plain files, no DVPL).
+
+    do_write(src, info, new_text, changes).
+    """
+    prime_row_index(game_path, project)
+    stats = {'files_total': 0, 'files_changed': 0, 'edits': 0, 'details': []}
+    for src in _region_cache_files(game_path, project):
+        rel = "(cache) " + os.path.basename(src)
+        stats['files_total'] += 1
+        log((tr('log_reading_file', file=src) if tr else f"  Reading: {src}"))
+        info = read_physical(src)
+        new_text, changes, _notes = modify_server_select_text(
+            info['text'], os.path.basename(src))
+        if changes > 0:
+            stats['files_changed'] += 1
+            stats['edits'] += changes
+        stats['details'].append({'rel': rel, 'src': src, 'is_dlc': False,
+                                 'is_cache': True, 'changes': changes})
+        do_write(src, info, new_text, changes)
+        if tick is not None:
+            tick(1)
+    return stats
+
+
+def _run_server_select(game_path, dvpl_mode, use_dlc, dlc_root, project, log, tr, do_write, tick=None):
+    prime_row_index(game_path, project)
+    stats = {'files_total': 0, 'files_changed': 0, 'edits': 0, 'details': []}
+    for rel in list(SERVER_SELECT_FILES) + list(LEGACY_REVERT_FILES):
+        src, is_dlc = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
+        if not src:
+            log((tr('log_serversel_missing', file=rel) if tr else f"  missing: {rel}, skipping"))
+            _log_nondvpl_twins(game_path, (rel,), dvpl_mode, log, tr)
+            continue
+        stats['files_total'] += 1
+        log((tr('log_reading_file', file=src) if tr else f"  Reading: {src}"))
+        info = read_physical(src)
+        new_text, changes, _notes = modify_server_select_text(info['text'], rel)
         if changes > 0:
             stats['files_changed'] += 1
             stats['edits'] += changes
@@ -280,12 +355,13 @@ def _added_specs(game_path, mod_id, dlc_root):
 
 
 def generate_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, tr=None,
-                  progress_cb=None):
+                  progress_cb=None, project="wargaming"):
     """Staged generation: transform to temp dir, then backup + install. Returns stats dict."""
     staging = make_staging()
     pending = []  # (staged_file, final_dst, is_dlc, backup_dst)
+    readonly_extra = set()  # final_dst paths to install read-only (region cache)
     all_stats = {}
-    total = _count_mod_jobs(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root)
+    total = _count_mod_jobs(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, project)
     tick = _make_ticker(progress_cb, total)
 
     def t(key, **kw):
@@ -332,6 +408,42 @@ def generate_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, t
                 game_path, dvpl_mode, use_dlc, dlc_root, log, tr,
                 commit_rt, commit_rt_icon, tick=tick)
 
+        if "server_select" in mod_ids:
+            def commit_ss(rel, src, is_dlc, info, new_text, changes):
+                st = _stage_write(staging, "ss_" + os.path.basename(rel).replace("/", "_").replace("\\", "_"),
+                                  new_text, info['encoding'], info['is_dvpl'], info['comp'])
+                pending.append((st, src, is_dlc, _backup_path(game_path, "server_select", is_dlc, src, dlc_root)))
+                # regions twin: the game reads plain regions_publish.yaml even
+                # when the .dvpl twin exists (clusters were missing in-game
+                # with only the .dvpl patched), so patch both variants.
+                if rel == "regions_publish.yaml":
+                    twin = src[:-5] if src.endswith(".dvpl") else src + ".dvpl"
+                    if twin != src and os.path.exists(twin):
+                        twin_is_dvpl = twin.endswith(".dvpl")
+                        st2 = _stage_write(staging, "ss_regions_twin",
+                                           new_text, info['encoding'], twin_is_dvpl,
+                                           info['comp'] if twin_is_dvpl else None)
+                        pending.append((st2, twin, is_dlc,
+                                        _backup_path(game_path, "server_select", is_dlc, twin, dlc_root)))
+            all_stats["server_select"] = _run_server_select(game_path, dvpl_mode, use_dlc, dlc_root, project, log, tr, commit_ss, tick=tick)
+
+        if "server_select" in mod_ids:
+            def commit_cache(src, info, new_text, changes):
+                st = _stage_write(staging, "ssc_" + os.path.basename(src),
+                                  new_text, info['encoding'], False, None)
+                pending.append((st, src, False, _backup_path_cache(game_path, src)))
+                # The client silently rebuilds region_cache on launch: keep
+                # our file read-only so it cannot be overwritten behind our back.
+                readonly_extra.add(os.path.normcase(os.path.abspath(src)))
+            _ss = all_stats.get("server_select") or {'files_total': 0, 'files_changed': 0, 'edits': 0, 'details': []}
+            _cs = _run_server_cache(game_path, project, log, tr, commit_cache, tick=tick)
+            for k in ('files_total', 'files_changed', 'edits'):
+                _ss[k] = _ss.get(k, 0) + _cs.get(k, 0)
+            _ss['details'] = list(_ss.get('details', [])) + list(_cs.get('details', []))
+            all_stats["server_select"] = _ss
+            if not _region_cache_files(game_path, project):
+                log(t('log_cache_missing'))
+
         # Stage complete -> backup originals, then install
         for staged, dst, is_dlc, backup_dst in pending:
             if backup_dst is None:
@@ -343,7 +455,8 @@ def generate_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, t
                 shutil.copy2(dst, backup_dst)
                 log(t('log_backup_file', file=backup_dst))
         for staged, dst, is_dlc, _b in pending:
-            install_one(staged, dst, set_readonly=bool(is_dlc))
+            install_one(staged, dst, set_readonly=bool(is_dlc) or
+                        os.path.normcase(os.path.abspath(dst)) in readonly_extra)
             log(t('log_installed_file', file=dst))
         if progress_cb is not None:
             try:
@@ -356,7 +469,7 @@ def generate_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, t
 
 
 def export_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, tr=None,
-                progress_cb=None):
+                progress_cb=None, project="wargaming"):
     version = get_game_version(game_path)
     bundle = f"BlitzMods_{'+'.join(mod_ids)}_{version}"
     try:
@@ -368,7 +481,7 @@ def export_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, tr=
     backup_root = os.path.join(result_root, "Backup")
     os.makedirs(mod_root, exist_ok=True)
     os.makedirs(backup_root, exist_ok=True)
-    total = _count_mod_jobs(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root)
+    total = _count_mod_jobs(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, project)
     tick = _make_ticker(progress_cb, total)
 
     def t(key, **kw):
@@ -431,6 +544,34 @@ def export_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, tr=
         _run_randomtank(game_path, dvpl_mode, use_dlc, dlc_root, log, tr,
                         commit_rt, commit_rt_icon, tick=tick)
 
+    if "server_select" in mod_ids:
+        def commit_ss(rel, src, is_dlc, info, new_text, changes):
+            mod_dst_b, bak_dst_b = out_paths(is_dlc, rel, info['is_dvpl'])
+            want_suffix = bool(is_dlc or info['is_dvpl'])
+            _export_write(mod_dst_b, new_text, info['encoding'], want_suffix, info['comp'], want_suffix)
+            _export_write(bak_dst_b, info['text'], info['encoding'], want_suffix, info['comp'], want_suffix)
+            # regions twin (see generate path): export both variants, backing
+            # up each twin's own original content.
+            if rel == "regions_publish.yaml":
+                twin = src[:-5] if src.endswith(".dvpl") else src + ".dvpl"
+                if twin != src and os.path.exists(twin):
+                    twin_info = read_physical(twin)
+                    twin_is_dvpl = twin.endswith(".dvpl")
+                    twin_suffix = bool(is_dlc or twin_is_dvpl)
+                    _export_write(mod_dst_b, new_text, twin_info['encoding'],
+                                  twin_suffix, twin_info['comp'], twin_suffix)
+                    _export_write(bak_dst_b, twin_info['text'], twin_info['encoding'],
+                                  twin_suffix, twin_info['comp'], twin_suffix)
+
+        def commit_cache(src, info, new_text, changes):
+            base = os.path.basename(src)
+            _export_write(os.path.join(mod_root, "Cache", base),
+                          new_text, info['encoding'], False, None, False)
+            _export_write(os.path.join(backup_root, "Cache", base),
+                          info['text'], info['encoding'], False, None, False)
+        _run_server_select(game_path, dvpl_mode, use_dlc, dlc_root, project, log, tr, commit_ss, tick=tick)
+        _run_server_cache(game_path, project, log, tr, commit_cache, tick=tick)
+
     if progress_cb is not None:
         try:
             progress_cb(total, total)
@@ -440,7 +581,8 @@ def export_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, tr=
     return result_root
 
 
-def restore_mods(game_path, mod_ids, dlc_root, log=print, tr=None, progress_cb=None):
+def restore_mods(game_path, mod_ids, dlc_root, log=print, tr=None, progress_cb=None,
+                 project="wargaming"):
     def t(key, **kw):
         return tr(key, **kw) if tr else key
     # collect first so progress has an upfront total
@@ -450,7 +592,12 @@ def restore_mods(game_path, mod_ids, dlc_root, log=print, tr=None, progress_cb=N
         if not os.path.exists(root):
             log(t('log_no_backup_for', mod=mod_id))
             continue
-        for prefix, base in (("Game", game_path), ("DLC", dlc_root)):
+        try:
+            cache_base = region_cache_dir(project)
+        except Exception:
+            cache_base = None
+        for prefix, base in (("Game", game_path), ("DLC", dlc_root),
+                             ("Cache", cache_base)):
             src_root = os.path.join(root, prefix)
             if not os.path.exists(src_root) or not base:
                 continue
@@ -482,11 +629,13 @@ def restore_mods(game_path, mod_ids, dlc_root, log=print, tr=None, progress_cb=N
 
 
 def collect_stats(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, tr=None,
-                  progress_cb=None):
+                  progress_cb=None, project="wargaming"):
     """Read-only stats (no writes)."""
     total = (len(NATIONS) if "hidden_tanks" in mod_ids else 0) + \
             (len(AUTORANKS_FILES) if "autoranks" in mod_ids else 0) + \
-            (len(RANDOMTANK_FILES) if "random_tank" in mod_ids else 0)
+            (len(RANDOMTANK_FILES) if "random_tank" in mod_ids else 0) + \
+            (len(SERVER_SELECT_FILES) + len(LEGACY_REVERT_FILES) if "server_select" in mod_ids else 0) + \
+            (len(_region_cache_files(game_path, project)) if "server_select" in mod_ids else 0)
     tick = _make_ticker(progress_cb, total)
     out = {}
     if "hidden_tanks" in mod_ids:
@@ -536,6 +685,28 @@ def collect_stats(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, t
                                     'src': cand, 'would_change': 'icon-new'})
                     break
         out["random_tank"] = details
+    if "server_select" in mod_ids:
+        prime_row_index(game_path, project)
+        details = []
+        for rel in list(SERVER_SELECT_FILES) + list(LEGACY_REVERT_FILES):
+            src, is_dlc = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
+            tick(1)
+            if not src:
+                details.append({'rel': rel, 'found': False})
+                continue
+            info = read_physical(src)
+            _new, changes, _n = modify_server_select_text(info['text'], rel)
+            details.append({'rel': rel, 'found': True, 'is_dlc': is_dlc,
+                            'src': src, 'would_change': changes})
+        for src in _region_cache_files(game_path, project):
+            tick(1)
+            info = read_physical(src)
+            _new, changes, _n = modify_server_select_text(
+                info['text'], os.path.basename(src))
+            details.append({'rel': "(cache) " + os.path.basename(src),
+                            'found': True, 'is_dlc': False, 'is_cache': True,
+                            'src': src, 'would_change': changes})
+        out["server_select"] = details
     if progress_cb is not None:
         try:
             progress_cb(total, total)

@@ -6,9 +6,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.03** — генератор модов для **Tanks Blitz** (Lesta Games) и **World of Tanks Blitz** (Wargaming).
-Собирает три мода: **HiddenTanks** (показывает скрытые танки в дереве исследований), **AutoRanksOFF**
-(убирает ранговые блокировки интерфейса ангара) и **RandomTankSelector** (добавляет кнопку-кубики случайного танка в ангар).
+**HuntezPatch v1.04** — генератор модов для **Tanks Blitz** (Lesta Games) и **World of Tanks Blitz** (Wargaming).
+Собирает четыре мода: **HiddenTanks** (показывает скрытые танки в дереве исследований), **AutoRanksOFF**
+(убирает ранговые блокировки интерфейса ангара) и **RandomTankSelector** (добавляет кнопку-кубики случайного танка в ангар) и **SelectableClusters** (список серверов с выбором кластера).
 
 > **Документация на других языках:**
 > [🇬🇧 English](README.en.md) · [🇺🇦 Українська](README.uk.md) · [🇩🇪 Deutsch](README.de.md) ·
@@ -43,6 +43,7 @@
 | **HiddenTanks** | Показывает ВСЕ скрытые танки в дереве исследований (премиум, коллекционные, тестовые, удалённые). Покупка по-прежнему зависит от акций разработчиков — мод только показывает технику. Сортировка скрытых по уровню: **обычные → коллекционные → премиум**, внутри группы по классу (**ЛТ → СТ → ТТ → ПТ**). | `Configs/TechTree/*_tree.yaml` (9 наций), `XML/item_defs/vehicles/*/list.xml` (9 наций) |
 | **AutoRanksOFF** | Убирает ранговые блокировки: кнопка «В бой» всегда видима, подсказки про ранг скрыты, события прокачки удалены, празднование «У вашего танка появился ранг!» не всплывает. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
 | **RandomTankSelector** | Добавляет кнопку с двумя кубиками в панель танков ангара — по нажатию выбирается случайный танк. Иконка кубиков генерируется при каждой генерации. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, новые файлы) |
+| **SelectableClusters** | Список серверов вместо карты; выбор кластера (EU_C0…) прямо из списка, кластеры под своим сервером. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; регионы в Data и region_cache |
 
 Та же информация есть в программе по кнопке **?** на карточке мода.
 
@@ -67,7 +68,10 @@
 ```bat
 autoinstall_modules.bat
 start_program.bat
+start_program.vbs
 ```
+
+start_program.vbs запускает без окна консоли (через start_program.bat — с окном).
 
 Или вручную:
 
@@ -161,9 +165,9 @@ result/BlitzMods_<моды>_<версия>/
 HuntezPatch/
 ├── main.py                  # точка входа
 ├── requirements.txt
-├── start_program.bat / autoinstall_modules.bat
+├── start_program.vbs / start_program.bat / autoinstall_modules.bat
 ├── config.json              # генерируется: ваши настройки (не в git)
-├── core/                    # DVPL-кодек, файловые операции, движки модов (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank)
+├── core/                    # DVPL-кодек, файловые операции, движки модов (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank, Mods/server_select)
 ├── gui/                     # интерфейс (плитки, проводник, попапы, журнал)
 ├── locales/                 # строки интерфейса ru/en/uk/de/tr/pl
 ├── Documentation/           # эта инструкция на 6 языках

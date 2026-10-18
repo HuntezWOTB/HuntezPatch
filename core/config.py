@@ -44,12 +44,20 @@ def get_system_language():
 
 def get_system_theme():
     import subprocess
+    import sys
+    if sys.platform != 'win32':
+        return 'light'
     try:
+        # reg.exe is a console app: hide its window or it flashes over GUI.
+        si = subprocess.STARTUPINFO()
+        si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         r = subprocess.run(
             ['reg', 'query',
              r'HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize',
              '/v', 'AppsUseLightTheme'],
-            capture_output=True, text=True, timeout=5)
+            capture_output=True, text=True, timeout=5,
+            startupinfo=si,
+            creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
         if "0x0" in r.stdout:
             return "dark"
     except Exception:

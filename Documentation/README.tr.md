@@ -6,9 +6,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.03**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
-Üç mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları gösterir), **AutoRanksOFF**
-(hangar arayüzündeki rütbe kilitlerini kaldırır) ve **RandomTankSelector** (hangara zarlı rastgele tank düğmesi ekler).
+**HuntezPatch v1.04**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
+Dört mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları gösterir), **AutoRanksOFF**
+(hangar arayüzündeki rütbe kilitlerini kaldırır) ve **RandomTankSelector** (hangara zarlı rastgele tank düğmesi ekler) ve **SelectableClusters** (küme seçimli sunucu listesi).
 
 > **Diğer dillerde belgeler:**
 > [🇬🇧 English](README.en.md) · [🇷🇺 Русский](README.ru.md) · [🇺🇦 Українська](README.uk.md) ·
@@ -43,6 +43,7 @@
 | **HiddenTanks** | Araştırma ağacındaki TÜM gizli tankları gösterir (premium, koleksiyonluk, test, kaldırılmış). Satın alma yine geliştirici tekliflerine bağlıdır — mod yalnızca gösterir. Seviye içi sıralama: **sıradan → koleksiyonluk → premium**, grup içinde sınıfa göre (**HT → MT → AT → TD**). | `Configs/TechTree/*_tree.yaml` (9 ulus), `XML/item_defs/vehicles/*/list.xml` (9 ulus) |
 | **AutoRanksOFF** | Rütbe kilitlerini kaldırır: Savaş düğmesi hep görünür, rütbe ipuçları gizlenir, rütbe olayları silinir, “tankın rütbe kazandı” kutlaması hiç çıkmaz. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
 | **RandomTankSelector** | Hangar tank paneline iki zarlı bir düğme ekler — basınca rastgele tank seçilir. Zar simgesi her üretimde oluşturulur. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, yeni dosyalar) |
+| **SelectableClusters** | Harita yerine sunucu listesi; küme seçimi (EU_C0…) doğrudan listeden, kümeler kendi sunucularının altında. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; Data ve region_cache içindeki bölgeler |
 
 Aynı bilgi uygulamada mod kartındaki **?** düğmesindedir.
 
@@ -67,7 +68,10 @@ Aynı bilgi uygulamada mod kartındaki **?** düğmesindedir.
 ```bat
 autoinstall_modules.bat
 start_program.bat
+start_program.vbs
 ```
+
+start_program.vbs konsol penceresi olmadan başlatır (start_program.bat ile — pencereli).
 
 Veya elle:
 
@@ -161,9 +165,9 @@ Tüm ayarlar otomatik kaydedilir ve açılışta geri gelir. İlk açılışta d
 HuntezPatch/
 ├── main.py                  # giriş noktası
 ├── requirements.txt
-├── start_program.bat / autoinstall_modules.bat
+├── start_program.vbs / start_program.bat / autoinstall_modules.bat
 ├── config.json              # üretilir: ayarlarınız (git'te yok)
-├── core/                    # DVPL codec, dosya işlemleri, mod motorları (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank)
+├── core/                    # DVPL codec, dosya işlemleri, mod motorları (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank, Mods/server_select)
 ├── gui/                     # arayüz (kartlar, gezgin, açılırlar, günlük)
 ├── locales/                 # arayüz metinleri ru/en/uk/de/tr/pl
 ├── Documentation/           # bu kılavuz, 6 dilde

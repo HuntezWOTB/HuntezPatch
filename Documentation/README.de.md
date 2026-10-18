@@ -6,9 +6,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.03** ist ein Mod-Generator für **World of Tanks Blitz** (Wargaming) und **Tanks Blitz** (Lesta Games).
-Er erstellt drei Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsbaum), **AutoRanksOFF**
-(entfernt die Rang-Sperren der Hangar-Oberfläche) und **RandomTankSelector** (Würfel-Button für Zufallspanzer im Hangar).
+**HuntezPatch v1.04** ist ein Mod-Generator für **World of Tanks Blitz** (Wargaming) und **Tanks Blitz** (Lesta Games).
+Er erstellt vier Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsbaum), **AutoRanksOFF**
+(entfernt die Rang-Sperren der Hangar-Oberfläche) und **RandomTankSelector** (Würfel-Button für Zufallspanzer im Hangar) und **SelectableClusters** (Serverliste mit Cluster-Wahl).
 
 > **Dokumentation in anderen Sprachen:**
 > [🇬🇧 English](README.en.md) · [🇷🇺 Русский](README.ru.md) · [🇺🇦 Українська](README.uk.md) ·
@@ -43,6 +43,7 @@ Er erstellt drei Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsbau
 | **HiddenTanks** | Zeigt ALLE versteckten Panzer im Forschungsbaum (Premium, Sammler, Test, entfernte). Der Kauf hängt weiterhin von den Angeboten ab — der Mod zeigt die Fahrzeuge nur an. Sortierung pro Stufe: **normal → Sammler → Premium**, innerhalb der Gruppe nach Klasse (**LT → MT → HT → TD**). | `Configs/TechTree/*_tree.yaml` (9 Nationen), `XML/item_defs/vehicles/*/list.xml` (9 Nationen) |
 | **AutoRanksOFF** | Entfernt die Rang-Sperren: Kampf-Button immer sichtbar, Rang-Hinweise versteckt, Aufstiegs-Events entfernt, die Feier „Dein Panzer hat einen Rang“ erscheint nie. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
 | **RandomTankSelector** | Fügt der Panzerleiste einen Button mit zwei Würfeln hinzu — per Klick wird ein zufälliger Panzer gewählt. Das Würfelsymbol wird bei jeder Generierung erzeugt. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, neue Dateien) |
+| **SelectableClusters** | Serverliste statt Karte; Cluster-Wahl (EU_C0…) direkt aus der Liste, Cluster unter ihrem Server. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; Regions in Data und region_cache |
 
 Dieselben Infos stehen in der App hinter dem **?**-Button der Mod-Karte.
 
@@ -67,7 +68,10 @@ Dieselben Infos stehen in der App hinter dem **?**-Button der Mod-Karte.
 ```bat
 autoinstall_modules.bat
 start_program.bat
+start_program.vbs
 ```
+
+start_program.vbs startet ohne Konsolenfenster (über start_program.bat — mit Fenster).
 
 Oder manuell:
 
@@ -161,9 +165,9 @@ Alle Einstellungen werden automatisch gespeichert und beim Start wiederhergestel
 HuntezPatch/
 ├── main.py                  # Einstiegspunkt
 ├── requirements.txt
-├── start_program.bat / autoinstall_modules.bat
+├── start_program.vbs / start_program.bat / autoinstall_modules.bat
 ├── config.json              # generiert: deine Einstellungen (nicht in git)
-├── core/                    # DVPL-Codec, Datei-Ops, Mod-Engines (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank)
+├── core/                    # DVPL-Codec, Datei-Ops, Mod-Engines (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank, Mods/server_select)
 ├── gui/                     # Oberfläche (Karten, Browser, Popups, Protokoll)
 ├── locales/                 # UI-Strings ru/en/uk/de/tr/pl
 ├── Documentation/           # dieses Handbuch in 6 Sprachen

@@ -6,9 +6,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.03** is a mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games).
-It builds three mods: **HiddenTanks** (reveals hidden tanks in the research tree), **AutoRanksOFF**
-(removes rank gating from the hangar UI) and **RandomTankSelector** (adds a random-tank dice button to the hangar).
+**HuntezPatch v1.04** is a mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games).
+It builds four mods: **HiddenTanks** (reveals hidden tanks in the research tree), **AutoRanksOFF**
+(removes rank gating from the hangar UI) and **RandomTankSelector** (adds a random-tank dice button to the hangar) and **SelectableClusters** (server list with a cluster picker).
 
 > **Documentation in other languages:**
 > [🇷🇺 Русский](README.ru.md) · [🇺🇦 Українська](README.uk.md) · [🇩🇪 Deutsch](README.de.md) ·
@@ -43,6 +43,7 @@ It builds three mods: **HiddenTanks** (reveals hidden tanks in the research tree
 | **HiddenTanks** | Shows ALL hidden tanks in the research tree (premium, collectible, test, deprecated). Purchase still depends on the developers' offers — the mod only reveals the vehicles. Hidden tanks are sorted per level as **ordinary → collectible → premium**, and by class inside each group (**LT → MT → HT → TD**). | `Configs/TechTree/*_tree.yaml` (9 nations), `XML/item_defs/vehicles/*/list.xml` (9 nations) |
 | **AutoRanksOFF** | Removes rank gating from the UI: the Battle button is always visible, rank-unlock hints are hidden, rank-up events are removed, and the “your tank has a rank” celebration never triggers. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
 | **RandomTankSelector** | Adds a two-dice button to the hangar tanks panel — pressing it selects a random owned tank. The dice icon is generated on every run. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, new files) |
+| **SelectableClusters** | Server list instead of the map; cluster pick (EU_C0…) right from the list, clusters under their server. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; regions in Data and region_cache |
 
 Click the **?** button on a mod card in the app for the same info in your language.
 
@@ -67,7 +68,10 @@ Click the **?** button on a mod card in the app for the same info in your langua
 ```bat
 autoinstall_modules.bat
 start_program.bat
+start_program.vbs
 ```
+
+start_program.vbs launches with no console window (via start_program.bat — with one).
 
 Or manually:
 
@@ -161,9 +165,9 @@ All settings (language, theme, path, mods, project, mode, DLC flag, window geome
 HuntezPatch/
 ├── main.py                  # entry point
 ├── requirements.txt
-├── start_program.bat / autoinstall_modules.bat
+├── start_program.vbs / start_program.bat / autoinstall_modules.bat
 ├── config.json              # generated: your settings (not in git)
-├── core/                    # dvpl codec, file ops, per-mod engines (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank)
+├── core/                    # dvpl codec, file ops, per-mod engines (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank, Mods/server_select)
 ├── gui/                     # Tkinter interface (tiles, explorer, popups, log)
 ├── locales/                 # ru/en/uk/de/tr/pl interface strings
 ├── Documentation/           # this manual in 6 languages

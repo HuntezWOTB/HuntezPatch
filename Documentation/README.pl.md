@@ -6,9 +6,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.03** to generator modów do **World of Tanks Blitz** (Wargaming) i **Tanks Blitz** (Lesta Games).
-Buduje trzy mody: **HiddenTanks** (pokazuje ukryte czołgi w drzewku badań), **AutoRanksOFF**
-(usuwa blokady rang z interfejsu hangaru) i **RandomTankSelector** (przycisk-kości losujące czołg w hangarze).
+**HuntezPatch v1.04** to generator modów do **World of Tanks Blitz** (Wargaming) i **Tanks Blitz** (Lesta Games).
+Buduje cztery mody: **HiddenTanks** (pokazuje ukryte czołgi w drzewku badań), **AutoRanksOFF**
+(usuwa blokady rang z interfejsu hangaru) i **RandomTankSelector** (przycisk-kości losujące czołg w hangarze) i **SelectableClusters** (lista serwerów z wyborem klastra).
 
 > **Dokumentacja w innych językach:**
 > [🇬🇧 English](README.en.md) · [🇷🇺 Русский](README.ru.md) · [🇺🇦 Українська](README.uk.md) ·
@@ -43,6 +43,7 @@ Buduje trzy mody: **HiddenTanks** (pokazuje ukryte czołgi w drzewku badań), **
 | **HiddenTanks** | Pokazuje WSZYSTKIE ukryte czołgi w drzewku badań (premium, kolekcjonerskie, testowe, usunięte). Zakup nadal zależy od ofert deweloperów — mod tylko pokazuje pojazdy. Sortowanie ukrytych na poziomie: **zwykłe → kolekcjonerskie → premium**, w grupie wg klasy (**LT → MT → HT → TD**). | `Configs/TechTree/*_tree.yaml` (9 nacji), `XML/item_defs/vehicles/*/list.xml` (9 nacji) |
 | **AutoRanksOFF** | Usuwa blokady rang: przycisk „Do boju“ zawsze widoczny, podpowiedzi o randze ukryte, eventy awansu usunięte, celebracja „twój czołg zdobył rangę” nigdy nie wyskakuje. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
 | **RandomTankSelector** | Dodaje przycisk z dwiema kośćmi do panelu czołgów — kliknięcie wybiera losowy czołg. Ikona kości jest generowana przy każdej generacji. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, nowe pliki) |
+| **SelectableClusters** | Lista serwerów zamiast mapy; wybór klastra (EU_C0…) prosto z listy, klastry pod własnym serwerem. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; regiony w Data i region_cache |
 
 Te same informacje są w programie pod przyciskiem **?** na karcie moda.
 
@@ -67,7 +68,10 @@ Te same informacje są w programie pod przyciskiem **?** na karcie moda.
 ```bat
 autoinstall_modules.bat
 start_program.bat
+start_program.vbs
 ```
+
+start_program.vbs uruchamia bez okna konsoli (przez start_program.bat — z oknem).
 
 Lub ręcznie:
 
@@ -161,9 +165,9 @@ Wszystkie ustawienia zapisują się automatycznie i wracają przy starcie. Przy 
 HuntezPatch/
 ├── main.py                  # punkt wejścia
 ├── requirements.txt
-├── start_program.bat / autoinstall_modules.bat
+├── start_program.vbs / start_program.bat / autoinstall_modules.bat
 ├── config.json              # generowany: twoje ustawienia (nie w git)
-├── core/                    # kodek DVPL, operacje plikowe, silniki modów (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank)
+├── core/                    # kodek DVPL, operacje plikowe, silniki modów (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank, Mods/server_select)
 ├── gui/                     # interfejs (karty, eksplorator, popupy, dziennik)
 ├── locales/                 # stringi UI ru/en/uk/de/tr/pl
 ├── Documentation/           # ta instrukcja w 6 językach

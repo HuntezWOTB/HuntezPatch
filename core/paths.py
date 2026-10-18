@@ -9,7 +9,7 @@
 import os
 import sys
 
-APP_VERSION = "v1.03"
+APP_VERSION = "v1.04"
 CONFIG_NAME = "huntezpatch_cfg.json"
 
 

@@ -32,7 +32,7 @@ def has_mod_signature(path):
         return False
 
 
-def get_modified_files(game_path, mod_ids, dlc_root):
+def get_modified_files(game_path, mod_ids, dlc_root, project="wargaming"):
     """Full normalized paths of modded files (game plain/.dvpl + DLC .dvpl)."""
     from core import orchestrator as _orc
     found = set()
@@ -58,4 +58,15 @@ def get_modified_files(game_path, mod_ids, dlc_root):
                         found.add(_norm(dlc_cand))
                 except Exception:
                     continue
+        if mid == "server_select":
+            try:
+                from core.Mods.server_select.cache import find_region_cache_files
+                for cand in find_region_cache_files(game_path, project) or []:
+                    try:
+                        if os.path.isfile(cand) and has_mod_signature(cand):
+                            found.add(_norm(cand))
+                    except Exception:
+                        continue
+            except Exception:
+                continue
     return found
