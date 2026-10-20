@@ -37,8 +37,13 @@ from core.Mods.server_select import (
     LEGACY_REVERT_FILES, SERVER_SELECT_FILES, modify_server_select_text,
     find_region_cache_files, region_cache_dir, prime_row_index,
 )
+from core.Mods.tank_stats import (
+    tankstats_files_for_project,
+    modify_tankstats_text,
+)
 
-MOD_IDS = ("hidden_tanks", "autoranks", "random_tank", "server_select")
+MOD_IDS = ("hidden_tanks", "autoranks", "random_tank", "server_select",
+           "tank_stats")
 
 
 def mod_rel_paths(mod_id, project="wargaming"):
@@ -53,6 +58,8 @@ def mod_rel_paths(mod_id, project="wargaming"):
         return list(RANDOMTANK_FILES) + list(ICON_RELS)
     if mod_id == "server_select":
         return list(SERVER_SELECT_FILES)
+    if mod_id == "tank_stats":
+        return list(tankstats_files_for_project(project))
     return []
 
 
@@ -140,6 +147,11 @@ def _count_mod_jobs(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, project="w
             src, _ = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
             if src:
                 total += 1
+    if "tank_stats" in mod_ids:
+        for rel in tankstats_files_for_project(project):
+            src, _ = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
+            if src:
+                total += 1
     if "random_tank" in mod_ids:
         for rel in RANDOMTANK_FILES:
             src, _ = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
@@ -201,6 +213,31 @@ def _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, do_write, t
         log((tr('log_reading_file', file=src) if tr else f"  Reading: {src}"))
         info = read_physical(src)
         new_text, changes, _notes = modify_autoranks_text(info['text'], rel, project)
+        if changes > 0:
+            stats['files_changed'] += 1
+            stats['edits'] += changes
+        stats['details'].append({'rel': rel, 'src': src, 'is_dlc': is_dlc, 'changes': changes})
+        do_write(rel, src, is_dlc, info, new_text, changes)
+        if tick is not None:
+            tick(1)
+    return stats
+
+
+# ---------------- TanksStatistics ----------------
+
+def _run_tankstats(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, do_write, tick=None,
+                   project="wargaming"):
+    stats = {'files_total': 0, 'files_changed': 0, 'edits': 0, 'details': []}
+    for rel in tankstats_files_for_project(project):
+        src, is_dlc = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
+        if not src:
+            log((tr('log_tankstats_missing', file=rel) if tr else f"  missing: {rel}, skipping"))
+            _log_nondvpl_twins(game_path, (rel,), dvpl_mode, log, tr)
+            continue
+        stats['files_total'] += 1
+        log((tr('log_reading_file', file=src) if tr else f"  Reading: {src}"))
+        info = read_physical(src)
+        new_text, changes, _notes = modify_tankstats_text(info['text'], rel, project)
         if changes > 0:
             stats['files_changed'] += 1
             stats['edits'] += changes
@@ -395,6 +432,14 @@ def generate_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, t
             all_stats["autoranks"] = _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, commit_ar, tick=tick,
                                                      project=project)
 
+        if "tank_stats" in mod_ids:
+            def commit_ts(rel, src, is_dlc, info, new_text, changes):
+                st = _stage_write(staging, "ts_" + os.path.basename(rel).replace("/", "_").replace("\\", "_"),
+                                  new_text, info['encoding'], info['is_dvpl'], info['comp'])
+                pending.append((st, src, is_dlc, _backup_path(game_path, "tank_stats", is_dlc, src, dlc_root)))
+            all_stats["tank_stats"] = _run_tankstats(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, commit_ts, tick=tick,
+                                                     project=project)
+
         if "random_tank" in mod_ids:
             def commit_rt(rel, src, is_dlc, info, new_text, changes):
                 st = _stage_write(staging, "rt_" + os.path.basename(rel).replace("/", "_").replace("\\", "_"),
@@ -532,6 +577,15 @@ def export_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, tr=
         _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, commit_ar, tick=tick,
                        project=project)
 
+    if "tank_stats" in mod_ids:
+        def commit_ts(rel, src, is_dlc, info, new_text, changes):
+            mod_dst_b, bak_dst_b = out_paths(is_dlc, rel, info['is_dvpl'])
+            want_suffix = bool(is_dlc or info['is_dvpl'])
+            _export_write(mod_dst_b, new_text, info['encoding'], want_suffix, info['comp'], want_suffix)
+            _export_write(bak_dst_b, info['text'], info['encoding'], want_suffix, info['comp'], want_suffix)
+        _run_tankstats(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, commit_ts, tick=tick,
+                       project=project)
+
     if "random_tank" in mod_ids:
         from core.dvpl_utils import write_dvpl as _write_dvpl, DVPL_TYPE_NONE as _DVPL_NONE
 
@@ -641,6 +695,7 @@ def collect_stats(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, t
     total = (len(NATIONS) if "hidden_tanks" in mod_ids else 0) + \
             (len(autoranks_files_for_project(project)) if "autoranks" in mod_ids else 0) + \
             (len(RANDOMTANK_FILES) if "random_tank" in mod_ids else 0) + \
+            (len(tankstats_files_for_project(project)) if "tank_stats" in mod_ids else 0) + \
             (len(SERVER_SELECT_FILES) + len(LEGACY_REVERT_FILES) if "server_select" in mod_ids else 0) + \
             (len(_region_cache_files(game_path, project)) if "server_select" in mod_ids else 0)
     tick = _make_ticker(progress_cb, total)
@@ -667,6 +722,19 @@ def collect_stats(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, t
             details.append({'rel': rel, 'found': True, 'is_dlc': is_dlc,
                             'src': src, 'would_change': changes})
         out["autoranks"] = details
+    if "tank_stats" in mod_ids:
+        details = []
+        for rel in tankstats_files_for_project(project):
+            src, is_dlc = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
+            tick(1)
+            if not src:
+                details.append({'rel': rel, 'found': False})
+                continue
+            info = read_physical(src)
+            _new, changes, _n = modify_tankstats_text(info['text'], rel, project)
+            details.append({'rel': rel, 'found': True, 'is_dlc': is_dlc,
+                            'src': src, 'would_change': changes})
+        out["tank_stats"] = details
     if "random_tank" in mod_ids:
         details = []
         for rel in RANDOMTANK_FILES:

@@ -6,9 +6,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.05** — генератор модів для **World of Tanks Blitz** (Wargaming) та **Tanks Blitz** (Lesta Games).
-Збирає чотири моди: **HiddenTanks** (показує приховані танки в дереві досліджень), **AutoRanksOFF**
-(прибирає рангові блокування інтерфейсу ангара) та **RandomTankSelector** (додає кнопку-кубики випадкового танка в ангар) та **SelectableClusters** (список серверів з вибором кластера).
+**HuntezPatch v1.06** — генератор модів для **World of Tanks Blitz** (Wargaming) та **Tanks Blitz** (Lesta Games).
+Збирає п’ять модів: **HiddenTanks** (показує приховані танки в дереві досліджень), **AutoRanksOFF**
+(прибирає рангові блокування інтерфейсу ангара) та **RandomTankSelector** (додає кнопку-кубики випадкового танка в ангар) та **SelectableClusters** (список серверів з вибором кластера) та **TanksStatistics** (шкода, бої, відсоток перемог і знак класності в каруселі).
 
 > **Документація іншими мовами:**
 > [🇬🇧 English](README.en.md) · [🇷🇺 Русский](README.ru.md) · [🇩🇪 Deutsch](README.de.md) ·
@@ -44,12 +44,13 @@
 | **AutoRanksOFF** | Прибирає рангові блокування: кнопка «В бій» завжди видима, підказки про ранг приховані, події прокачування видалені, святкування «У вашого танка з'явився ранг!» не спливає. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
 | **RandomTankSelector** | Додає кнопку з двома кубиками на панель танків ангара — натискання обирає випадковий танк. Іконка кубиків генерується при кожній генерації. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, нові файли) |
 | **SelectableClusters** | Список серверів замість мапи; вибір кластера (EU_C0…) просто зі списку, кластери під власним сервером. Тільки WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; регіони в Data і region_cache |
+| **TanksStatistics** | Шкода, бої та відсоток перемог кожного танка просто в каруселі ангара + вищий знак класності поруч із рівнем. WoT Blitz і Tanks Blitz. | `UI/Screens3/Lobby/Hangar/TanksPanel/OwnedTankCell.yaml` |
 
 Та сама інформація є в програмі за кнопкою **?** на картці мода.
 
 ## Можливості
 
-- Три моди в одній утиліті, вибираються незалежно (картки-чекбокси).
+- П’ять модів в одній утиліті, вибираються незалежно (картки-чекбокси).
 - Операції **Генерація** (стейджинг: temp → бекап → заміна) та **Експорт** (папка `Mod` + `Backup` для поширення).
 - Режими файлів **DVPL / NON-DVPL**; DLC-файли завжди DVPL.
 - **Підтримка DLC (мікрооновлень)** з авто-підказкою та відкриттям папки `packs` в один клік.

@@ -6,9 +6,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.05** is a mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games).
-It builds four mods: **HiddenTanks** (reveals hidden tanks in the research tree), **AutoRanksOFF**
-(removes rank gating from the hangar UI) and **RandomTankSelector** (adds a random-tank dice button to the hangar) and **SelectableClusters** (server list with a cluster picker).
+**HuntezPatch v1.06** is a mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games).
+It builds five mods: **HiddenTanks** (reveals hidden tanks in the research tree), **AutoRanksOFF**
+(removes rank gating from the hangar UI) and **RandomTankSelector** (adds a random-tank dice button to the hangar) and **SelectableClusters** (server list with a cluster picker) and **TanksStatistics** (damage, battles, win rate and mastery badge in the carousel).
 
 > **Documentation in other languages:**
 > [🇷🇺 Русский](README.ru.md) · [🇺🇦 Українська](README.uk.md) · [🇩🇪 Deutsch](README.de.md) ·
@@ -44,12 +44,13 @@ It builds four mods: **HiddenTanks** (reveals hidden tanks in the research tree)
 | **AutoRanksOFF** | Removes the rank auto-grant: init animations no longer fire UnlockFirstRank by themselves — ranks open only via the upgrade button. The rank screen works as usual. Removed notifications: hangar teaser/counters + sounds, promo popup, lightning, ceremony fanfare. WG: reference rankUnlockRequired patch. Tanks Blitz: own structure, same principle. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` (+ `AchievementsTab.actions`, `NotEliteTankPanelInitialization.animation`, `TankRankInitialization.animation` for Tanks Blitz only) |
 | **RandomTankSelector** | Adds a two-dice button to the hangar tanks panel — pressing it selects a random owned tank. The dice icon is generated on every run. WoT Blitz only: Tanks Blitz ships the official random picker — the mod is unavailable there. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, new files) |
 | **SelectableClusters** | Server list instead of the map; cluster pick (EU_C0…) right from the list, clusters under their server. WoT Blitz only. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; regions in Data and region_cache |
+| **TanksStatistics** | Damage, battles and win rate of every tank right in the hangar carousel + highest mastery badge next to the level. WoT Blitz and Tanks Blitz. | `UI/Screens3/Lobby/Hangar/TanksPanel/OwnedTankCell.yaml` |
 
 Click the **?** button on a mod card in the app for the same info in your language.
 
 ## Features
 
-- Three mods in one utility, selectable independently (checkbox cards).
+- Five mods in one utility, selectable independently (checkbox cards).
 - **Generate** (staged: temp dir → backup → replace) and **Export** (ready-to-share `Mod` + `Backup` bundle) operations.
 - **DVPL / NON-DVPL** file modes; DLC files are always DVPL.
 - **DLC (micro-update) support** with auto-detection hint and one-click `packs` folder opening.

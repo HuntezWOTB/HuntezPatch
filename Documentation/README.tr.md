@@ -6,9 +6,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.05**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
-Dört mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları gösterir), **AutoRanksOFF**
-(hangar arayüzündeki rütbe kilitlerini kaldırır) ve **RandomTankSelector** (hangara zarlı rastgele tank düğmesi ekler) ve **SelectableClusters** (küme seçimli sunucu listesi).
+**HuntezPatch v1.06**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
+Beş mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları gösterir), **AutoRanksOFF**
+(hangar arayüzündeki rütbe kilitlerini kaldırır) ve **RandomTankSelector** (hangara zarlı rastgele tank düğmesi ekler) ve **SelectableClusters** (küme seçimli sunucu listesi) ve **TanksStatistics** (karuzelde hasar, savaş, zafer oranı ve ustalık rozeti).
 
 > **Diğer dillerde belgeler:**
 > [🇬🇧 English](README.en.md) · [🇷🇺 Русский](README.ru.md) · [🇺🇦 Українська](README.uk.md) ·
@@ -44,12 +44,13 @@ Dört mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları göst
 | **AutoRanksOFF** | Rütbe kilitlerini kaldırır: Savaş düğmesi hep görünür, rütbe ipuçları gizlenir, rütbe olayları silinir, “tankın rütbe kazandı” kutlaması hiç çıkmaz. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
 | **RandomTankSelector** | Hangar tank paneline iki zarlı bir düğme ekler — basınca rastgele tank seçilir. Zar simgesi her üretimde oluşturulur. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, yeni dosyalar) |
 | **SelectableClusters** | Harita yerine sunucu listesi; küme seçimi (EU_C0…) doğrudan listeden, kümeler kendi sunucularının altında. Yalnızca WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; Data ve region_cache içindeki bölgeler |
+| **TanksStatistics** | Hangar karuselinde her tankın hasarı, savaşı ve zafer oranı + seviyenin yanında en yüksek ustalık rozeti. WoT Blitz ve Tanks Blitz. | `UI/Screens3/Lobby/Hangar/TanksPanel/OwnedTankCell.yaml` |
 
 Aynı bilgi uygulamada mod kartındaki **?** düğmesindedir.
 
 ## Özellikler
 
-- Tek araçta üç mod, bağımsız seçilir (kart onay kutuları).
+- Tek araçta beş mod, bağımsız seçilir (kart onay kutuları).
 - **Üret** (aşamalı: temp → yedek → değiştir) ve **Dışa aktar** (paylaşıma hazır `Mod` + `Backup` paketi) işlemleri.
 - **DVPL / NON-DVPL** dosya kipleri; DLC dosyaları her zaman DVPL.
 - Otomatik uyarılı **DLC (mikro güncelleme) desteği**, `packs` klasörünü tek tıkla açma.

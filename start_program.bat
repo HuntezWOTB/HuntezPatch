@@ -1,13 +1,10 @@
 @echo off
+REM HuntezPatch debug launch: runs the program from sources with a visible
+REM console window, so all logs and tracebacks stay on screen for debugging.
 chcp 65001 >nul
 cd /d "%~dp0"
-rem Console-less launch: pythonw creates no cmd window at all, so the GUI
-rem appears straight away (no flash + hide dance like with python.exe).
-where pythonw >nul 2>nul
-if errorlevel 1 (
-    echo WARNING: pythonw not found, falling back to console mode.
-    python main.py
-    pause
-) else (
-    start "" pythonw main.py
-)
+echo === HuntezPatch (debug, console) ===
+python main.py
+echo.
+echo Program exited with code %errorlevel%.
+pause

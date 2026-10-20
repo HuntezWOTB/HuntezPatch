@@ -6,9 +6,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.05** to generator modów do **World of Tanks Blitz** (Wargaming) i **Tanks Blitz** (Lesta Games).
-Buduje cztery mody: **HiddenTanks** (pokazuje ukryte czołgi w drzewku badań), **AutoRanksOFF**
-(usuwa blokady rang z interfejsu hangaru) i **RandomTankSelector** (przycisk-kości losujące czołg w hangarze) i **SelectableClusters** (lista serwerów z wyborem klastra).
+**HuntezPatch v1.06** to generator modów do **World of Tanks Blitz** (Wargaming) i **Tanks Blitz** (Lesta Games).
+Buduje pięć modów: **HiddenTanks** (pokazuje ukryte czołgi w drzewku badań), **AutoRanksOFF**
+(usuwa blokady rang z interfejsu hangaru) i **RandomTankSelector** (przycisk-kości losujące czołg w hangarze) i **SelectableClusters** (lista serwerów z wyborem klastra) i **TanksStatistics** (uszkodzenia, bitwy, procent zwycięstw i stopień biegłości w karuzeli).
 
 > **Dokumentacja w innych językach:**
 > [🇬🇧 English](README.en.md) · [🇷🇺 Русский](README.ru.md) · [🇺🇦 Українська](README.uk.md) ·
@@ -44,12 +44,13 @@ Buduje cztery mody: **HiddenTanks** (pokazuje ukryte czołgi w drzewku badań), 
 | **AutoRanksOFF** | Usuwa blokady rang: przycisk „Do boju“ zawsze widoczny, podpowiedzi o randze ukryte, eventy awansu usunięte, celebracja „twój czołg zdobył rangę” nigdy nie wyskakuje. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
 | **RandomTankSelector** | Dodaje przycisk z dwiema kośćmi do panelu czołgów — kliknięcie wybiera losowy czołg. Ikona kości jest generowana przy każdej generacji. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, nowe pliki) |
 | **SelectableClusters** | Lista serwerów zamiast mapy; wybór klastra (EU_C0…) prosto z listy, klastry pod własnym serwerem. Tylko WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; regiony w Data i region_cache |
+| **TanksStatistics** | Uszkodzenia, bitwy i procent zwycięstw każdego czołgu w karuzeli hangaru + najwyższy stopień biegłości obok poziomu. WoT Blitz i Tanks Blitz. | `UI/Screens3/Lobby/Hangar/TanksPanel/OwnedTankCell.yaml` |
 
 Te same informacje są w programie pod przyciskiem **?** na karcie moda.
 
 ## Funkcje
 
-- Trzy mody w jednym narzędziu, wybierane niezależnie (karty-checkboxy).
+- Pięć modów w jednym narzędziu, wybierane niezależnie (karty-checkboxy).
 - Operacje **Generuj** (staging: temp → backup → zamiana) i **Eksportuj** (paczka `Mod` + `Backup` do rozdawania).
 - Tryby plików **DVPL / NON-DVPL**; pliki DLC zawsze DVPL.
 - **Wsparcie DLC (mikroaktualizacji)** z auto-podpowiedzią i otwieraniem folderu `packs` jednym klikiem.

@@ -5,16 +5,17 @@
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/Version-v1.05-orange.svg)
+![Version](https://img.shields.io/badge/Version-v1.06-orange.svg)
 
 Mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games):
 **HiddenTanks** (shows hidden tanks), **AutoRanksOFF** (disables rank gating),
-**RandomTankSelector** (random-tank dice button) and **SelectableClusters**
-(login server list with per-cluster picker).
+**RandomTankSelector** (random-tank dice button), **SelectableClusters**
+(login server list with per-cluster picker) and **TanksStatistics**
+(per-tank stats and mastery badge in the hangar carousel).
 
 ## Download
 
-Get `HuntezPatch-1.05.exe` from
+Get `HuntezPatch-1.06.exe` from
 [Releases](https://github.com/HuntezWOTB/HuntezPatch/releases) — no Python install
 needed, just run it.
 
@@ -28,7 +29,7 @@ Portable user data lives in `%LocalAppData%/HuntezProjects/HuntezPatch/`:
 build.bat
 ```
 
-Requires Windows + Python 3.8+. Output: `dist/HuntezPatch-1.05.exe`.
+Requires Windows + Python 3.8+. Output: `dist/HuntezPatch-1.06.exe`.
 Launch from source with `start_program.vbs` (no console window).
 
 ## Documentation

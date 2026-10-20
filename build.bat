@@ -1,8 +1,9 @@
 @echo off
+REM HuntezPatch build v1.06: assembles the program into a single exe.
 chcp 65001 >nul
 cd /d "%~dp0"
 
-echo === HuntezPatch build v1.05 ===
+echo === HuntezPatch build v1.06 ===
 echo [1/3] Installing dependencies...
 python -m pip install -r requirements.txt pyinstaller
 if errorlevel 1 (
@@ -27,9 +28,9 @@ if not defined NOICON (
 
 echo [3/3] Building onefile exe...
 if defined NOICON (
-    python -m PyInstaller --noconfirm --clean --onefile --windowed --name HuntezPatch-1.05 --add-data "locales;locales" --add-data "huntezpatch_icon.png;." main.py
+    python -m PyInstaller --noconfirm --clean --onefile --windowed --name HuntezPatch-1.06 --add-data "locales;locales" --add-data "huntezpatch_icon.png;." main.py
 ) else (
-    python -m PyInstaller --noconfirm --clean --onefile --windowed --name HuntezPatch-1.05 --icon huntezpatch_icon.ico --add-data "locales;locales" --add-data "huntezpatch_icon.png;." main.py
+    python -m PyInstaller --noconfirm --clean --onefile --windowed --name HuntezPatch-1.06 --icon huntezpatch_icon.ico --add-data "locales;locales" --add-data "huntezpatch_icon.png;." main.py
 )
 if errorlevel 1 (
     echo ERROR: PyInstaller build failed.
@@ -39,5 +40,5 @@ if errorlevel 1 (
 if exist huntezpatch_icon.ico del huntezpatch_icon.ico
 
 echo.
-echo OK: dist\HuntezPatch-1.05.exe
+echo OK: dist\HuntezPatch-1.06.exe
 pause

@@ -6,9 +6,9 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.05** ist ein Mod-Generator für **World of Tanks Blitz** (Wargaming) und **Tanks Blitz** (Lesta Games).
-Er erstellt vier Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsbaum), **AutoRanksOFF**
-(entfernt die Rang-Sperren der Hangar-Oberfläche) und **RandomTankSelector** (Würfel-Button für Zufallspanzer im Hangar) und **SelectableClusters** (Serverliste mit Cluster-Wahl).
+**HuntezPatch v1.06** ist ein Mod-Generator für **World of Tanks Blitz** (Wargaming) und **Tanks Blitz** (Lesta Games).
+Er erstellt fünf Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsbaum), **AutoRanksOFF**
+(entfernt die Rang-Sperren der Hangar-Oberfläche) und **RandomTankSelector** (Würfel-Button für Zufallspanzer im Hangar) und **SelectableClusters** (Serverliste mit Cluster-Wahl) und **TanksStatistics** (Schaden, Gefechte, Siegquote und Mastery-Abzeichen im Karussell).
 
 > **Dokumentation in anderen Sprachen:**
 > [🇬🇧 English](README.en.md) · [🇷🇺 Русский](README.ru.md) · [🇺🇦 Українська](README.uk.md) ·
@@ -44,12 +44,13 @@ Er erstellt vier Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsbau
 | **AutoRanksOFF** | Entfernt die Rang-Sperren: Kampf-Button immer sichtbar, Rang-Hinweise versteckt, Aufstiegs-Events entfernt, die Feier „Dein Panzer hat einen Rang“ erscheint nie. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
 | **RandomTankSelector** | Fügt der Panzerleiste einen Button mit zwei Würfeln hinzu — per Klick wird ein zufälliger Panzer gewählt. Das Würfelsymbol wird bei jeder Generierung erzeugt. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, neue Dateien) |
 | **SelectableClusters** | Serverliste statt Karte; Cluster-Wahl (EU_C0…) direkt aus der Liste, Cluster unter ihrem Server. Nur WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; Regions in Data und region_cache |
+| **TanksStatistics** | Schaden, Gefechte und Siegquote jedes Panzers direkt im Hangar-Karussell + höchstes Mastery-Abzeichen neben der Stufe. WoT Blitz und Tanks Blitz. | `UI/Screens3/Lobby/Hangar/TanksPanel/OwnedTankCell.yaml` |
 
 Dieselben Infos stehen in der App hinter dem **?**-Button der Mod-Karte.
 
 ## Funktionen
 
-- Drei Mods in einem Tool, unabhängig wählbar (Karten mit Checkbox).
+- Fünf Mods in einem Tool, unabhängig wählbar (Karten mit Checkbox).
 - Vorgänge **Generieren** (Staging: temp → Backup → Ersetzen) und **Exportieren** (`Mod`- + `Backup`-Paket zum Teilen).
 - Dateimodi **DVPL / NON-DVPL**; DLC-Dateien immer DVPL.
 - **DLC-Unterstützung (Mikro-Updates)** mit Auto-Hinweis und Ein-Klick-Öffnen des `packs`-Ordners.
