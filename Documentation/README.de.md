@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.06** ist ein Mod-Generator für **World of Tanks Blitz** (Wargaming) und **Tanks Blitz** (Lesta Games).
+**HuntezPatch v1.07** ist ein Mod-Generator für **World of Tanks Blitz** (Wargaming) und **Tanks Blitz** (Lesta Games).
 Er erstellt fünf Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsbaum), **AutoRanksOFF**
 (entfernt die Rang-Sperren der Hangar-Oberfläche) und **RandomTankSelector** (Würfel-Button für Zufallspanzer im Hangar) und **SelectableClusters** (Serverliste mit Cluster-Wahl) und **TanksStatistics** (Schaden, Gefechte, Siegquote und Mastery-Abzeichen im Karussell).
 
@@ -41,7 +41,7 @@ Er erstellt fünf Mods: **HiddenTanks** (zeigt versteckte Panzer im Forschungsba
 | Mod | Funktion | Dateien (relativ zu `Data/`) |
 |-----|----------|------------------------------|
 | **HiddenTanks** | Zeigt ALLE versteckten Panzer im Forschungsbaum (Premium, Sammler, Test, entfernte). Der Kauf hängt weiterhin von den Angeboten ab — der Mod zeigt die Fahrzeuge nur an. Sortierung pro Stufe: **normal → Sammler → Premium**, innerhalb der Gruppe nach Klasse (**LT → MT → HT → TD**). | `Configs/TechTree/*_tree.yaml` (9 Nationen), `XML/item_defs/vehicles/*/list.xml` (9 Nationen) |
-| **AutoRanksOFF** | Entfernt die Rang-Sperren: Kampf-Button immer sichtbar, Rang-Hinweise versteckt, Aufstiegs-Events entfernt, die Feier „Dein Panzer hat einen Rang“ erscheint nie. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
+| **AutoRanksOFF** | Entfernt die Rang-Sperren: Kampf-Button immer sichtbar, Rang-Hinweise versteckt, Aufstiegs-Events entfernt, die Feier „Dein Panzer hat einen Rang“ erscheint nie. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml`, `NotEliteTankPanelInitialization.animation`, `TankRankInitialization.animation` (plain- und .dvpl-Kopie) |
 | **RandomTankSelector** | Fügt der Panzerleiste einen Button mit zwei Würfeln hinzu — per Klick wird ein zufälliger Panzer gewählt. Das Würfelsymbol wird bei jeder Generierung erzeugt. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, neue Dateien) |
 | **SelectableClusters** | Serverliste statt Karte; Cluster-Wahl (EU_C0…) direkt aus der Liste, Cluster unter ihrem Server. Nur WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; Regions in Data und region_cache |
 | **TanksStatistics** | Schaden, Gefechte und Siegquote jedes Panzers direkt im Hangar-Karussell + höchstes Mastery-Abzeichen neben der Stufe. WoT Blitz und Tanks Blitz. | `UI/Screens3/Lobby/Hangar/TanksPanel/OwnedTankCell.yaml` |
@@ -81,7 +81,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Keine Installation nötig — das Programm ist portabel. Einstellungen liegen in `config.json` neben `main.py`.
+Keine Installation nötig - das Programm ist portabel. Einstellungen liegen in `%LocalAppData%/HuntezProjects/HuntezPatch/huntezpatch_cfg.json`.
 
 ## Schnellstart
 
@@ -167,7 +167,7 @@ HuntezPatch/
 ├── main.py                  # Einstiegspunkt
 ├── requirements.txt
 ├── start_program.vbs / start_program.bat / autoinstall_modules.bat
-├── config.json              # generiert: deine Einstellungen (nicht in git)
+├── (Nutzerdaten)            # in %LocalAppData%/HuntezProjects/HuntezPatch (nicht in git)
 ├── core/                    # DVPL-Codec, Datei-Ops, Mod-Engines (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank, Mods/server_select)
 ├── gui/                     # Oberfläche (Karten, Browser, Popups, Protokoll)
 ├── locales/                 # UI-Strings ru/en/uk/de/tr/pl
@@ -175,7 +175,7 @@ HuntezPatch/
 └── result/                  # generiert: Export-Pakete (nicht in git)
 ```
 
-Zur Laufzeit entstehen nur `config.json` und `result/` — der Rest ist Quellcode.
+Zur Laufzeit entstehen nur Nutzerdaten in `%LocalAppData%/HuntezProjects/HuntezPatch/` - der Rest ist Quellcode.
 Vollständige Liste in [.gitignore](../.gitignore).
 
 ## Sprachen

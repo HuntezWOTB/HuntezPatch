@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.06** is a mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games).
+**HuntezPatch v1.07** is a mod generator for **World of Tanks Blitz** (Wargaming) and **Tanks Blitz** (Lesta Games).
 It builds five mods: **HiddenTanks** (reveals hidden tanks in the research tree), **AutoRanksOFF**
 (removes rank gating from the hangar UI) and **RandomTankSelector** (adds a random-tank dice button to the hangar) and **SelectableClusters** (server list with a cluster picker) and **TanksStatistics** (damage, battles, win rate and mastery badge in the carousel).
 
@@ -41,7 +41,7 @@ It builds five mods: **HiddenTanks** (reveals hidden tanks in the research tree)
 | Mod | What it does | Files (relative to `Data/`) |
 |-----|--------------|------------------------------|
 | **HiddenTanks** | Shows ALL hidden tanks in the research tree (premium, collectible, test, deprecated). Purchase still depends on the developers' offers — the mod only reveals the vehicles. Hidden tanks are sorted per level as **ordinary → collectible → premium**, and by class inside each group (**LT → MT → HT → TD**). | `Configs/TechTree/*_tree.yaml` (9 nations), `XML/item_defs/vehicles/*/list.xml` (9 nations) |
-| **AutoRanksOFF** | Removes the rank auto-grant: init animations no longer fire UnlockFirstRank by themselves — ranks open only via the upgrade button. The rank screen works as usual. Removed notifications: hangar teaser/counters + sounds, promo popup, lightning, ceremony fanfare. WG: reference rankUnlockRequired patch. Tanks Blitz: own structure, same principle. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` (+ `AchievementsTab.actions`, `NotEliteTankPanelInitialization.animation`, `TankRankInitialization.animation` for Tanks Blitz only) |
+| **AutoRanksOFF** | Removes the rank auto-grant: init animations no longer fire UnlockFirstRank by themselves — ranks open only via the upgrade button. The rank screen works as usual. Removed notifications: hangar teaser/counters + sounds, promo popup, lightning, ceremony fanfare. WG: reference rankUnlockRequired patch. Tanks Blitz: own structure, same principle. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml`, `NotEliteTankPanelInitialization.animation`, `TankRankInitialization.animation` (both projects; WG plain and .dvpl copies) — Tanks Blitz additionally `AchievementsTab.actions` and 2 rank popups |
 | **RandomTankSelector** | Adds a two-dice button to the hangar tanks panel — pressing it selects a random owned tank. The dice icon is generated on every run. WoT Blitz only: Tanks Blitz ships the official random picker — the mod is unavailable there. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, new files) |
 | **SelectableClusters** | Server list instead of the map; cluster pick (EU_C0…) right from the list, clusters under their server. WoT Blitz only. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; regions in Data and region_cache |
 | **TanksStatistics** | Damage, battles and win rate of every tank right in the hangar carousel + highest mastery badge next to the level. WoT Blitz and Tanks Blitz. | `UI/Screens3/Lobby/Hangar/TanksPanel/OwnedTankCell.yaml` |
@@ -81,7 +81,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-No installation is needed — the program is portable. Settings live in `config.json` next to `main.py`.
+No installation is needed - the program is portable. Settings live in `%LocalAppData%/HuntezProjects/HuntezPatch/huntezpatch_cfg.json`.
 
 ## Quick Start
 
@@ -167,7 +167,7 @@ HuntezPatch/
 ├── main.py                  # entry point
 ├── requirements.txt
 ├── start_program.vbs / start_program.bat / autoinstall_modules.bat
-├── config.json              # generated: your settings (not in git)
+├── (user data)              # lives in %LocalAppData%/HuntezProjects/HuntezPatch (not in git)
 ├── core/                    # dvpl codec, file ops, per-mod engines (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank, Mods/server_select)
 ├── gui/                     # Tkinter interface (tiles, explorer, popups, log)
 ├── locales/                 # ru/en/uk/de/tr/pl interface strings
@@ -175,7 +175,7 @@ HuntezPatch/
 └── result/                  # generated: export bundles (not in git)
 ```
 
-Only `config.json` and `result/` are created at runtime — everything else is stock source.
+Only user data under `%LocalAppData%/HuntezProjects/HuntezPatch/` is created at runtime - everything else is stock source.
 See [.gitignore](../.gitignore) for the full list.
 
 ## Languages

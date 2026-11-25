@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.06** to generator modów do **World of Tanks Blitz** (Wargaming) i **Tanks Blitz** (Lesta Games).
+**HuntezPatch v1.07** to generator modów do **World of Tanks Blitz** (Wargaming) i **Tanks Blitz** (Lesta Games).
 Buduje pięć modów: **HiddenTanks** (pokazuje ukryte czołgi w drzewku badań), **AutoRanksOFF**
 (usuwa blokady rang z interfejsu hangaru) i **RandomTankSelector** (przycisk-kości losujące czołg w hangarze) i **SelectableClusters** (lista serwerów z wyborem klastra) i **TanksStatistics** (uszkodzenia, bitwy, procent zwycięstw i stopień biegłości w karuzeli).
 
@@ -41,7 +41,7 @@ Buduje pięć modów: **HiddenTanks** (pokazuje ukryte czołgi w drzewku badań)
 | Mod | Co robi | Pliki (względem `Data/`) |
 |-----|---------|------------------------------|
 | **HiddenTanks** | Pokazuje WSZYSTKIE ukryte czołgi w drzewku badań (premium, kolekcjonerskie, testowe, usunięte). Zakup nadal zależy od ofert deweloperów — mod tylko pokazuje pojazdy. Sortowanie ukrytych na poziomie: **zwykłe → kolekcjonerskie → premium**, w grupie wg klasy (**LT → MT → HT → TD**). | `Configs/TechTree/*_tree.yaml` (9 nacji), `XML/item_defs/vehicles/*/list.xml` (9 nacji) |
-| **AutoRanksOFF** | Usuwa blokady rang: przycisk „Do boju“ zawsze widoczny, podpowiedzi o randze ukryte, eventy awansu usunięte, celebracja „twój czołg zdobył rangę” nigdy nie wyskakuje. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
+| **AutoRanksOFF** | Usuwa blokady rang: przycisk „Do boju“ zawsze widoczny, podpowiedzi o randze ukryte, eventy awansu usunięte, celebracja „twój czołg zdobył rangę” nigdy nie wyskakuje. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml`, `NotEliteTankPanelInitialization.animation`, `TankRankInitialization.animation` (kopie plain i .dvpl) |
 | **RandomTankSelector** | Dodaje przycisk z dwiema kośćmi do panelu czołgów — kliknięcie wybiera losowy czołg. Ikona kości jest generowana przy każdej generacji. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, nowe pliki) |
 | **SelectableClusters** | Lista serwerów zamiast mapy; wybór klastra (EU_C0…) prosto z listy, klastry pod własnym serwerem. Tylko WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; regiony w Data i region_cache |
 | **TanksStatistics** | Uszkodzenia, bitwy i procent zwycięstw każdego czołgu w karuzeli hangaru + najwyższy stopień biegłości obok poziomu. WoT Blitz i Tanks Blitz. | `UI/Screens3/Lobby/Hangar/TanksPanel/OwnedTankCell.yaml` |
@@ -81,7 +81,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Instalacja nie jest potrzebna — program jest przenośny. Ustawienia w `config.json` obok `main.py`.
+Instalacja nie jest potrzebna - program jest przenośny. Ustawienia znajdują się w `%LocalAppData%/HuntezProjects/HuntezPatch/huntezpatch_cfg.json`.
 
 ## Szybki start
 
@@ -167,7 +167,7 @@ HuntezPatch/
 ├── main.py                  # punkt wejścia
 ├── requirements.txt
 ├── start_program.vbs / start_program.bat / autoinstall_modules.bat
-├── config.json              # generowany: twoje ustawienia (nie w git)
+├── (dane użytkownika)       # w %LocalAppData%/HuntezProjects/HuntezPatch (nie w git)
 ├── core/                    # kodek DVPL, operacje plikowe, silniki modów (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank, Mods/server_select)
 ├── gui/                     # interfejs (karty, eksplorator, popupy, dziennik)
 ├── locales/                 # stringi UI ru/en/uk/de/tr/pl
@@ -175,7 +175,7 @@ HuntezPatch/
 └── result/                  # generowane: paczki eksportu (nie w git)
 ```
 
-W trakcie pracy powstają tylko `config.json` i `result/` — reszta to źródła.
+W trakcie pracy powstają tylko dane użytkownika w `%LocalAppData%/HuntezProjects/HuntezPatch/` - reszta to źródła.
 Pełna lista w [.gitignore](../.gitignore).
 
 ## Języki

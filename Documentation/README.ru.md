@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.06** — генератор модов для **World of Tanks Blitz** (Wargaming) и **Tanks Blitz** (Lesta Games).
+**HuntezPatch v1.07** — генератор модов для **World of Tanks Blitz** (Wargaming) и **Tanks Blitz** (Lesta Games).
 Собирает пять модов: **HiddenTanks** (показывает скрытые танки в дереве исследований), **AutoRanksOFF**
 (убирает ранговые блокировки интерфейса ангара) и **RandomTankSelector** (добавляет кнопку-кубики случайного танка в ангар) и **SelectableClusters** (список серверов с выбором кластера) и **TanksStatistics** (урон, бои, процент побед и знак классности в карусели).
 
@@ -41,7 +41,7 @@
 | Мод | Что делает | Файлы (относительно `Data/`) |
 |-----|------------|------------------------------|
 | **HiddenTanks** | Показывает ВСЕ скрытые танки в дереве исследований (премиум, коллекционные, тестовые, удалённые). Покупка по-прежнему зависит от акций разработчиков — мод только показывает технику. Сортировка скрытых по уровню: **обычные → коллекционные → премиум**, внутри группы по классу (**ЛТ → СТ → ТТ → ПТ**). | `Configs/TechTree/*_tree.yaml` (9 наций), `XML/item_defs/vehicles/*/list.xml` (9 наций) |
-| **AutoRanksOFF** | Убирает автовыдачу ранга: анимации инициализации больше не шлют UnlockFirstRank сами — ранг открывается только кнопкой «Повысить». Экран рангов работает как обычно. Убраны уведомления: тизер/счётчики и их звуки в ангаре, промо-попап, молния, фанфары церемонии. WG: эталонный патч rankUnlockRequired. Tanks Blitz: своя структура, принцип тот же. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` (+ `AchievementsTab.actions`, `NotEliteTankPanelInitialization.animation`, `TankRankInitialization.animation` только для Tanks Blitz) |
+| **AutoRanksOFF** | Убирает автовыдачу ранга: анимации инициализации больше не шлют UnlockFirstRank сами — ранг открывается только кнопкой «Повысить». Экран рангов работает как обычно. Убраны уведомления: тизер/счётчики и их звуки в ангаре, промо-попап, молния, фанфары церемонии. WG: эталонный патч rankUnlockRequired. Tanks Blitz: своя структура, принцип тот же. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml`, `NotEliteTankPanelInitialization.animation`, `TankRankInitialization.animation` (оба проекта; на WG патчатся plain- и .dvpl-копии) — на Tanks Blitz дополнительно `AchievementsTab.actions` и 2 попапа рангов |
 | **RandomTankSelector** | Добавляет кнопку с двумя кубиками в панель танков ангара — по нажатию выбирается случайный танк. Иконка кубиков генерируется при каждой генерации. Только WoT Blitz: в Tanks Blitz есть официальная кнопка «ВЫБРАТЬ СЛУЧАЙНО» — мод там недоступен. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, новые файлы) |
 | **SelectableClusters** | Список серверов вместо карты; выбор кластера (EU_C0…) прямо из списка, кластеры под своим сервером. Только WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; регионы в Data и region_cache |
 | **TanksStatistics** | Урон, бои и процент побед каждого танка прямо в карусели ангара + высший знак классности рядом с уровнем. WoT Blitz и Tanks Blitz. | `UI/Screens3/Lobby/Hangar/TanksPanel/OwnedTankCell.yaml` |
@@ -81,7 +81,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Установка не нужна — программа портативная. Настройки хранятся в `config.json` рядом с `main.py`.
+Установка не нужна - программа портативна. Настройки лежат в `%LocalAppData%/HuntezProjects/HuntezPatch/huntezpatch_cfg.json`.
 
 ## Быстрый старт
 
@@ -167,7 +167,7 @@ HuntezPatch/
 ├── main.py                  # точка входа
 ├── requirements.txt
 ├── start_program.vbs / start_program.bat / autoinstall_modules.bat
-├── config.json              # генерируется: ваши настройки (не в git)
+├── (данные пользователя)    # в %LocalAppData%/HuntezProjects/HuntezPatch (не в git)
 ├── core/                    # DVPL-кодек, файловые операции, движки модов (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank, Mods/server_select)
 ├── gui/                     # интерфейс (плитки, проводник, попапы, журнал)
 ├── locales/                 # строки интерфейса ru/en/uk/de/tr/pl
@@ -175,7 +175,7 @@ HuntezPatch/
 └── result/                  # генерируется: экспортные пакеты (не в git)
 ```
 
-При запуске создаются только `config.json` и `result/` — остальное исходники.
+Во время работы создаются только данные пользователя в `%LocalAppData%/HuntezProjects/HuntezPatch/` - остальное исходники.
 Полный список — в [.gitignore](../.gitignore).
 
 ## Языки

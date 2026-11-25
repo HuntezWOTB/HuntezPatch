@@ -18,6 +18,10 @@ Reference behaviour (OFF-GetRank_MOD original/edited pairs):
    10. GameModeAbilities (Hangar only): append "and not trainingVisible" to the
       "tankAbilitiesVisible and not isInSquad" condition, so the small
       "Способности" popup no longer shows in the training room.
+   11. *Initialization.animation (v7): drop the auto-fired Event("UnlockFirstRank")
+       lines — same transform as Lesta (patch_lesta). These lines ARE the
+       tab-open auto-grant; the manual button chain stays untouched.
+       plain + .dvpl twins are both written by the orchestrator.
 Everything else (incl. the rankUnlockRequired binding definition itself and
 the UnlockRankHint condition) is left untouched, byte-for-byte.
 Idempotent: re-running an edited file yields 0 changes.
@@ -54,6 +58,15 @@ def modify_autoranks_text(text, filename="", project="wargaming"):
             return modify_autoranks_actions_lesta(text, filename)
         from .patch_lesta import modify_autoranks_text_lesta
         return modify_autoranks_text_lesta(text, filename)
+
+    # WG v7 insurance: init animations cut the same way as on Lesta — only the
+    # auto Event("UnlockFirstRank") lines go; buttons/chains untouched. Same
+    # transform, so reuse the Lesta one.
+    fname = (filename or "").replace("\\", "/")
+    if fname.endswith(".animation") or fname.endswith(".animation.dvpl"):
+        from .patch_lesta import modify_autoranks_animation_lesta
+        return modify_autoranks_animation_lesta(text, filename)
+
     notes = []
     changes = 0
     lines = text.splitlines()
@@ -74,15 +87,6 @@ def modify_autoranks_text(text, filename="", project="wargaming"):
                 line = new_line
                 changes += n
 
-        # 2b. GameModeAbilities ("Способности"): hide in training room.
-        # Hangar.yaml defines trainingVisible (prebattleType == TRAINING);
-        # vanilla condition shows abilities there, which is wrong for that mode.
-        if "Hangar.yaml" in filename and "tankAbilitiesVisible" in line and "not isInSquad" in line \
-                and "condition" in line and "not trainingVisible" not in line:
-            line = line.replace("tankAbilitiesVisible and not isInSquad",
-                                "tankAbilitiesVisible and not isInSquad and not trainingVisible")
-            changes += 1
-
         # 3. conditions: drop the rank clause, keep the expression valid.
         if "rankUnlockRequired" in line and "condition" in line:
             if "not rankUnlockRequired and " in line:
@@ -94,6 +98,18 @@ def modify_autoranks_text(text, filename="", project="wargaming"):
             if "not rankUnlockRequired" in line:
                 line = line.replace("not rankUnlockRequired", "true")
                 changes += 1
+
+        # 2b. GameModeAbilities ("Способности"): hide in training room.
+        # Hangar.yaml defines trainingVisible (prebattleType == TRAINING);
+        # vanilla condition shows abilities there, which is wrong for that mode.
+        # MUST run after rule 3: the vanilla line carries "not rankUnlockRequired"
+        # between the two anchors, so matching pre-trim would defer the guard
+        # to a second pass (pass2 change -> not idempotent on first generate).
+        if "Hangar.yaml" in filename and "tankAbilitiesVisible" in line and "not isInSquad" in line \
+                and "condition" in line and "not trainingVisible" not in line:
+            line = line.replace("tankAbilitiesVisible and not isInSquad",
+                                "tankAbilitiesVisible and not isInSquad and not trainingVisible")
+            changes += 1
 
         # 4-5. Delete arg passthrough / SquadView local bool param.
         if "rankUnlockRequired" in line and (_RE_ARG_PASS.match(line) or _RE_PARAM_BOOL_FALSE.match(line)):

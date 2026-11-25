@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.06**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
+**HuntezPatch v1.07**, **World of Tanks Blitz** (Wargaming) ve **Tanks Blitz** (Lesta Games) için mod üreticisidir.
 Beş mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları gösterir), **AutoRanksOFF**
 (hangar arayüzündeki rütbe kilitlerini kaldırır) ve **RandomTankSelector** (hangara zarlı rastgele tank düğmesi ekler) ve **SelectableClusters** (küme seçimli sunucu listesi) ve **TanksStatistics** (karuzelde hasar, savaş, zafer oranı ve ustalık rozeti).
 
@@ -41,7 +41,7 @@ Beş mod kurar: **HiddenTanks** (araştırma ağacındaki gizli tankları göste
 | Mod | Ne yapar | Dosyalar (`Data/` göreli) |
 |-----|----------|------------------------------|
 | **HiddenTanks** | Araştırma ağacındaki TÜM gizli tankları gösterir (premium, koleksiyonluk, test, kaldırılmış). Satın alma yine geliştirici tekliflerine bağlıdır — mod yalnızca gösterir. Seviye içi sıralama: **sıradan → koleksiyonluk → premium**, grup içinde sınıfa göre (**HT → MT → AT → TD**). | `Configs/TechTree/*_tree.yaml` (9 ulus), `XML/item_defs/vehicles/*/list.xml` (9 ulus) |
-| **AutoRanksOFF** | Rütbe kilitlerini kaldırır: Savaş düğmesi hep görünür, rütbe ipuçları gizlenir, rütbe olayları silinir, “tankın rütbe kazandı” kutlaması hiç çıkmaz. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
+| **AutoRanksOFF** | Rütbe kilitlerini kaldırır: Savaş düğmesi hep görünür, rütbe ipuçları gizlenir, rütbe olayları silinir, “tankın rütbe kazandı” kutlaması hiç çıkmaz. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml`, `NotEliteTankPanelInitialization.animation`, `TankRankInitialization.animation` (plain ve .dvpl kopyaları) |
 | **RandomTankSelector** | Hangar tank paneline iki zarlı bir düğme ekler — basınca rastgele tank seçilir. Zar simgesi her üretimde oluşturulur. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, yeni dosyalar) |
 | **SelectableClusters** | Harita yerine sunucu listesi; küme seçimi (EU_C0…) doğrudan listeden, kümeler kendi sunucularının altında. Yalnızca WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; Data ve region_cache içindeki bölgeler |
 | **TanksStatistics** | Hangar karuselinde her tankın hasarı, savaşı ve zafer oranı + seviyenin yanında en yüksek ustalık rozeti. WoT Blitz ve Tanks Blitz. | `UI/Screens3/Lobby/Hangar/TanksPanel/OwnedTankCell.yaml` |
@@ -81,7 +81,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Kurulum gerekmez — program taşınabilirdir. Ayarlar `main.py` yanındaki `config.json` dosyasındadır.
+Kurulum gerekmez - program taşınabilir. Ayarlar `%LocalAppData%/HuntezProjects/HuntezPatch/huntezpatch_cfg.json` dosyasındadır.
 
 ## Hızlı Başlangıç
 
@@ -167,7 +167,7 @@ HuntezPatch/
 ├── main.py                  # giriş noktası
 ├── requirements.txt
 ├── start_program.vbs / start_program.bat / autoinstall_modules.bat
-├── config.json              # üretilir: ayarlarınız (git'te yok)
+├── (kullanıcı verileri)     # %LocalAppData%/HuntezProjects/HuntezPatch (git'te yok)
 ├── core/                    # DVPL codec, dosya işlemleri, mod motorları (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank, Mods/server_select)
 ├── gui/                     # arayüz (kartlar, gezgin, açılırlar, günlük)
 ├── locales/                 # arayüz metinleri ru/en/uk/de/tr/pl
@@ -175,7 +175,7 @@ HuntezPatch/
 └── result/                  # üretilir: dışa aktarma paketleri (git'te yok)
 ```
 
-Çalışırken yalnızca `config.json` ve `result/` oluşur — gerisi kaynak kodudur.
+Çalışırken yalnızca `%LocalAppData%/HuntezProjects/HuntezPatch/` içindeki kullanıcı verileri oluşur - gerisi kaynak kodudur.
 Tam liste: [.gitignore](../.gitignore).
 
 ## Diller

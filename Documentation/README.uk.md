@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**HuntezPatch v1.06** — генератор модів для **World of Tanks Blitz** (Wargaming) та **Tanks Blitz** (Lesta Games).
+**HuntezPatch v1.07** — генератор модів для **World of Tanks Blitz** (Wargaming) та **Tanks Blitz** (Lesta Games).
 Збирає п’ять модів: **HiddenTanks** (показує приховані танки в дереві досліджень), **AutoRanksOFF**
 (прибирає рангові блокування інтерфейсу ангара) та **RandomTankSelector** (додає кнопку-кубики випадкового танка в ангар) та **SelectableClusters** (список серверів з вибором кластера) та **TanksStatistics** (шкода, бої, відсоток перемог і знак класності в каруселі).
 
@@ -41,7 +41,7 @@
 | Мод | Що робить | Файли (відносно `Data/`) |
 |-----|------------|------------------------------|
 | **HiddenTanks** | Показує ВСІ приховані танки в дереві досліджень (преміумні, колекційні, тестові, видалені). Купівля й далі залежить від акцій розробників — мод лише показує техніку. Сортування прихованих за рівнем: **звичайні → колекційні → преміумні**, всередині групи за класом (**ЛТ → СТ → ВТ → ПТ**). | `Configs/TechTree/*_tree.yaml` (9 націй), `XML/item_defs/vehicles/*/list.xml` (9 націй) |
-| **AutoRanksOFF** | Прибирає рангові блокування: кнопка «В бій» завжди видима, підказки про ранг приховані, події прокачування видалені, святкування «У вашого танка з'явився ранг!» не спливає. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml` |
+| **AutoRanksOFF** | Прибирає рангові блокування: кнопка «В бій» завжди видима, підказки про ранг приховані, події прокачування видалені, святкування «У вашого танка з'явився ранг!» не спливає. | `UI/Screens3/Lobby/Hangar/Hangar.yaml`, `UI/Screens3/Lobby/Hangar/Squad/SquadView.yaml`, `UI/Screens3/Lobby/Inventory/Inventory.yaml`, `UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml`, `NotEliteTankPanelInitialization.animation`, `TankRankInitialization.animation` (копії plain і .dvpl) |
 | **RandomTankSelector** | Додає кнопку з двома кубиками на панель танків ангара — натискання обирає випадковий танк. Іконка кубиків генерується при кожній генерації. | `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.yaml`, `UI/Screens3/Lobby/Hangar/TanksPanel/TanksPanel.actions`, `Gfx/Lobby/icons/randomtankselector_button_icon.packed.webp` (+ @2x, нові файли) |
 | **SelectableClusters** | Список серверів замість мапи; вибір кластера (EU_C0…) просто зі списку, кластери під власним сервером. Тільки WoT Blitz. | UI/Screens3/PreLogin/ServerSelection.yaml, ServerDescriptionPrototype.yaml, Entry.yaml, NewGame.yaml; регіони в Data і region_cache |
 | **TanksStatistics** | Шкода, бої та відсоток перемог кожного танка просто в каруселі ангара + вищий знак класності поруч із рівнем. WoT Blitz і Tanks Blitz. | `UI/Screens3/Lobby/Hangar/TanksPanel/OwnedTankCell.yaml` |
@@ -81,7 +81,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Встановлення не потрібне — програма портативна. Налаштування зберігаються в `config.json` поруч із `main.py`.
+Встановлення не потрібне - програма портативна. Налаштування зберігаються у `%LocalAppData%/HuntezProjects/HuntezPatch/huntezpatch_cfg.json`.
 
 ## Швидкий старт
 
@@ -167,7 +167,7 @@ HuntezPatch/
 ├── main.py                  # точка входу
 ├── requirements.txt
 ├── start_program.vbs / start_program.bat / autoinstall_modules.bat
-├── config.json              # генерується: ваші налаштування (не в git)
+├── (дані користувача)       # у %LocalAppData%/HuntezProjects/HuntezPatch (не в git)
 ├── core/                    # DVPL-кодек, файлові операції, рушії модів (Mods/hidden_tanks, Mods/autoranks, Mods/random_tank, Mods/server_select)
 ├── gui/                     # інтерфейс (плитки, провідник, попапи, журнал)
 ├── locales/                 # рядки інтерфейсу ru/en/uk/de/tr/pl
@@ -175,7 +175,7 @@ HuntezPatch/
 └── result/                  # генерується: експортні пакети (не в git)
 ```
 
-Під час роботи створюються лише `config.json` і `result/` — решта сирці.
+Під час роботи створюються лише дані користувача в `%LocalAppData%/HuntezProjects/HuntezPatch/` - решта це вихідний код.
 Повний список — у [.gitignore](../.gitignore).
 
 ## Мови

@@ -15,9 +15,19 @@ AUTORANKS_FILES = [
     "UI/Screens3/Lobby/Inventory/TankProgress/AchievementsTab.yaml",
 ]
 
-# WG (Wargaming) file list — identical paths, kept as an alias so the
-# orchestrator can pick the structure per project.
-AUTORANKS_FILES_WG = list(AUTORANKS_FILES)
+# WG (Wargaming) file list: the 4 base yamls plus the two auto-fire init
+# animations (v7). Cutting their Event("UnlockFirstRank") lines kills the
+# tab-open auto-grant at the source; the manual GET RANK chain is untouched,
+# so ranks stay obtainable by button.
+# These animations ship as plain AND .dvpl twins in Data/ -> both are patched
+# (same lesson as regions_publish.yaml in SelectableClusters).
+AUTORANKS_ANIMATIONS_WG = [
+    "UI/Screens3/Lobby/Inventory/TankProgress/NotEliteTankPanelInitialization.animation",
+    "UI/Screens3/Lobby/Inventory/TankProgress/TankRankInitialization.animation",
+]
+AUTORANKS_FILES_WG = list(AUTORANKS_FILES) + list(AUTORANKS_ANIMATIONS_WG)
+# Rels whose plain/.dvpl twin must be written alongside the picked source.
+AUTORANKS_TWIN_RELS = frozenset(AUTORANKS_ANIMATIONS_WG)
 
 # Lesta file list (v5): 4 yaml + ceremony script + 2 init animations
 # + 2 rank notification popups.

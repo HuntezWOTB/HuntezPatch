@@ -26,6 +26,7 @@ from core.file_ops import (
 from core.Mods.hidden_tanks import NATIONS, process_xml, generate_tree_yaml, get_nation_stat, classify_tank
 from core.Mods.autoranks import (
     AUTORANKS_FILES,
+    AUTORANKS_TWIN_RELS,
     autoranks_files_for_project,
     modify_autoranks_text,
 )
@@ -147,6 +148,10 @@ def _count_mod_jobs(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, project="w
             src, _ = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
             if src:
                 total += 1
+                if rel in AUTORANKS_TWIN_RELS:
+                    twin = src[:-5] if src.endswith(".dvpl") else src + ".dvpl"
+                    if twin != src and os.path.exists(twin):
+                        total += 1
     if "tank_stats" in mod_ids:
         for rel in tankstats_files_for_project(project):
             src, _ = _pick_source(game_path, rel, use_dlc, dlc_root, dvpl_mode)
@@ -429,6 +434,18 @@ def generate_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, t
                 st = _stage_write(staging, "ar_" + os.path.basename(rel).replace("/", "_").replace("\\", "_"),
                                   new_text, info['encoding'], info['is_dvpl'], info['comp'])
                 pending.append((st, src, is_dlc, _backup_path(game_path, "autoranks", is_dlc, src, dlc_root)))
+                # Init animations ship as plain + .dvpl twins and the engine may
+                # read either (see regions_publish lesson in server_select):
+                # patch both copies so the auto Event cannot survive.
+                if not is_dlc and rel in AUTORANKS_TWIN_RELS:
+                    twin = src[:-5] if src.endswith(".dvpl") else src + ".dvpl"
+                    if twin != src and os.path.exists(twin):
+                        twin_is_dvpl = twin.endswith(".dvpl")
+                        st2 = _stage_write(staging, "ar_twin_" + os.path.basename(twin),
+                                           new_text, info['encoding'], twin_is_dvpl,
+                                           info['comp'] if twin_is_dvpl else None)
+                        pending.append((st2, twin, False,
+                                        _backup_path(game_path, "autoranks", False, twin, dlc_root)))
             all_stats["autoranks"] = _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, commit_ar, tick=tick,
                                                      project=project)
 
@@ -574,6 +591,18 @@ def export_mods(game_path, mod_ids, dvpl_mode, use_dlc, dlc_root, log=print, tr=
             want_suffix = bool(is_dlc or info['is_dvpl'])
             _export_write(mod_dst_b, new_text, info['encoding'], want_suffix, info['comp'], want_suffix)
             _export_write(bak_dst_b, info['text'], info['encoding'], want_suffix, info['comp'], want_suffix)
+            # plain+.dvpl twins of the init animations: export both variants,
+            # backing up each twin's own original content (see generate path).
+            if not is_dlc and rel in AUTORANKS_TWIN_RELS:
+                twin = src[:-5] if src.endswith(".dvpl") else src + ".dvpl"
+                if twin != src and os.path.exists(twin):
+                    twin_info = read_physical(twin)
+                    twin_is_dvpl = twin.endswith(".dvpl")
+                    twin_suffix = bool(twin_is_dvpl)
+                    _export_write(mod_dst_b, new_text, twin_info['encoding'],
+                                  twin_is_dvpl, twin_info['comp'], twin_suffix)
+                    _export_write(bak_dst_b, twin_info['text'], twin_info['encoding'],
+                                  twin_is_dvpl, twin_info['comp'], twin_suffix)
         _run_autoranks(game_path, dvpl_mode, use_dlc, dlc_root, log, tr, commit_ar, tick=tick,
                        project=project)
 
